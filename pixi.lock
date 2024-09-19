@@ -16,6 +16,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/click-8.1.7-unix_pyh707e725_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/decorator-5.1.1-pyhd8ed1ab_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/noarch/dlt-1.0.0-pyh534df25_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/duckdb-1.0.0-hd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/fsspec-2024.9.0-pyhff2d567_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitdb-4.0.11-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitpython-3.1.43-pyhd8ed1ab_0.conda
@@ -44,6 +45,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/pysocks-1.7.1-pyha2e5f31_6.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/python-3.12.6-h739c21a_0_cpython.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/python-dateutil-2.9.0-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/python-duckdb-1.0.0-py312h5c2e7bc_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/python-tzdata-2024.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/python_abi-3.12-5_cp312.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/pytz-2024.2-pyhd8ed1ab_0.conda
@@ -251,6 +253,21 @@ packages:
   license_family: APACHE
   size: 507001
   timestamp: 1726515168235
+- kind: conda
+  name: duckdb
+  version: 1.0.0
+  build: hd8ed1ab_0
+  subdir: noarch
+  noarch: generic
+  url: https://conda.anaconda.org/conda-forge/noarch/duckdb-1.0.0-hd8ed1ab_0.conda
+  sha256: 368dab03b51ac9a084c79918449652deaef59029a5f4d942d9bf7101ad1f9f55
+  md5: 4ff8d9fb8309f6305d5f9c651fa25bf3
+  depends:
+  - python-duckdb >=1.0.0,<1.0.1.0a0
+  license: MIT
+  license_family: MIT
+  size: 7850
+  timestamp: 1717686359276
 - kind: conda
   name: fsspec
   version: 2024.9.0
@@ -706,6 +723,24 @@ packages:
   license_family: APACHE
   size: 222742
   timestamp: 1709299922152
+- kind: conda
+  name: python-duckdb
+  version: 1.0.0
+  build: py312h5c2e7bc_0
+  subdir: osx-arm64
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/python-duckdb-1.0.0-py312h5c2e7bc_0.conda
+  sha256: a7c0440513de0ecfd0e503cda07b45ba79cb4fc3b4f688d5ed28e030965b69e0
+  md5: 718f3bdf4dfaf27dd9de4ef33d59ed6b
+  depends:
+  - __osx >=11.0
+  - libcxx >=16
+  - python >=3.12,<3.13.0a0
+  - python >=3.12,<3.13.0a0 *_cpython
+  - python_abi 3.12.* *_cp312
+  license: MIT
+  license_family: MIT
+  size: 18599154
+  timestamp: 1717686322241
 - kind: conda
   name: python-tzdata
   version: '2024.1'
