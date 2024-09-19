@@ -13,7 +13,7 @@ from dlt.sources.rest_api import (
 """
 https://api.legiscan.com/?key=APIKEY&op=getSearch&state=STATE&query=QUERY
 """
-def load_legiscan() -> None:
+def load_legiscan(api_key: str = dlt.secrets.value) -> None:
     pipeline = dlt.pipeline(
         pipeline_name="rest_api_legiscan",
         destination='duckdb',
@@ -40,11 +40,11 @@ def load_legiscan() -> None:
                     },
                 },
             },
-            # "resources": [
-            #     "searchresult",
-            #     "summary",
-            #     "results",
-            # ],
+            "resources": [
+                "searchresult",
+                # "summary",
+                # "results",
+            ],
         }
     )
 
