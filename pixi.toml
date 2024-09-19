@@ -1,0 +1,12 @@
+[project]
+authors = ["Edmund Miller <git@edmundmiller.dev>"]
+channels = ["conda-forge", "bioconda"]
+description = "Add a short description here"
+name = "period-legislation"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+dlt = ">=1.0.0,<2"
