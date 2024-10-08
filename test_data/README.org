@@ -1,0 +1,7 @@
+#+title: Readme
+
+#+begin_src bash
+jq -c '.searchresult | to_entries[] | select(.key|tonumber? != null) | .value | {state, bill_number, bill_id, url, text_url, last_action_date, last_action, title}' periodic.json | duckdb -c "SELECT * FROM read_json_auto('/dev/stdin');"
+#+end_src
+
+https://api.legiscan.com/?key=<API-KEY>&op=getSearch&state=ALL&query="Feminine Hygiene"
