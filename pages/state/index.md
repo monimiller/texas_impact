@@ -1,9 +1,15 @@
 ---
-title: "State Legislation Overview"
+title: State Level Data
 queries:
-  - states: states.sql
+   - state: state.sql
 ---
 
-# State Legislation Overview
+Click on a state to see more detail
 
-Click on a state to see related bills.
+
+```sql state_with_link
+select *, '/state/' || state_name as link
+from ${state}
+```
+
+<DataTable data={state_with_link} link=link rows=all/>
