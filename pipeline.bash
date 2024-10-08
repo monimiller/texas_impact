@@ -21,7 +21,13 @@ curl -G "https://api.legiscan.com/" \
         title
     }
 ' | duckdb -c "
-    CREATE TABLE bills AS
+    CREATE TABLE new_bills AS
     SELECT * FROM read_json_auto('/dev/stdin');
-    COPY bills TO 'bills.csv' (HEADER, DELIMITER ',');
+    
+    CREATE TABLE IF NOT EXISTS bills AS
+    SELECT * FROM 'hf_stats/bills.csv';
+    
+    INSERT INTO bills SELECT * FROM new_bills;
+    
+    COPY bills TO 'hf_stats/bills.csv' (HEADER, DELIMITER ',');
 "
