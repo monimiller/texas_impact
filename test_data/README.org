@@ -5,3 +5,8 @@ jq -c '.searchresult | to_entries[] | select(.key|tonumber? != null) | .value | 
 #+end_src
 
 https://api.legiscan.com/?key=<API-KEY>&op=getSearch&state=ALL&query="Feminine Hygiene"
+
+#+begin_src bash
+APIKEY=""
+curl -G "https://api.legiscan.com/" --data-urlencode "key=$APIKEY" --data-urlencode "op=getSearch" --data-urlencode "state=ALL" --data-urlencode "query=Feminine Hygiene" -o all_state.json
+#+end_src
