@@ -8,7 +8,7 @@ while true; do
         --data-urlencode "key=$APIKEY" \
         --data-urlencode "op=getSearch" \
         --data-urlencode "state=ALL" \
-        --data-urlencode "year=4" \
+        --data-urlencode "year=1" \
         --data-urlencode "page=$page" \
         --data-urlencode "query=Feminine Hygiene" | jq -c '
             .searchresult |
