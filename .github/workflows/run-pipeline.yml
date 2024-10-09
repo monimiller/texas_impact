@@ -2,7 +2,7 @@ name: Run Pipeline Daily
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs every day at midnight UTC
+    - cron: "0 0 * * *" # Runs every day at midnight UTC
 
 jobs:
   run-pipeline:
@@ -11,21 +11,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-        # Stage previous data in
-      - name: Install huggingface-cli
-        run: pip install huggingface-hub
-
-      - name: Authenticate with Hugging Face
-        env:
-          HUGGINGFACE_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: huggingface-cli login --token "$HUGGINGFACE_TOKEN"
-
-      - name: Download Hugging Face Dataset
-        run: huggingface-cli download edmundmiller/period_care_legislation --local-dir hf_stats --repo-type dataset --quiet
-
-        # Run pipeline
-
+        # Run data pipeline
       - name: Set up environment
         run: |
           sudo apt-get update
@@ -35,20 +21,10 @@ jobs:
         env:
           APIKEY: ${{ secrets.APIKEY }}
         run: ./pipeline.bash
-
-        # Stage bills.csv for upload
-
-      - name: Copy bills.csv to Hugging Face Dataset
-        run: cp bills.csv hf_stats/
-
-      - name: Upload bills.csv to Hugging Face Dataset
-        run: huggingface-cli upload edmundmiller/period_care_legislation hf_stats --repo-type dataset --quiet
-
-      - name: Commit and Push Changes to Hugging Face
+      - name: Commit CSV updates
         run: |
-          cd hf_dataset
-          git config --global user.email "action@github.com"
-          git config --global user.name "Periodic"
-          git add bills.csv
-          git commit -m "Update bills.csv"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Automated update"
           git push
