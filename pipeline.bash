@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+APIKEY="915b8d36efc1524035bf6336561b07e6"
 # Fetch bills related to Feminine Hygiene from LegiScan API
 curl -G "https://api.legiscan.com/" \
     --data-urlencode "key=$APIKEY" \
     --data-urlencode "op=getSearch" \
     --data-urlencode "state=ALL" \
+    --data-urlencode "year=4" \
     --data-urlencode "query=Feminine Hygiene" |
     jq -c '
     .searchresult |
