@@ -16,16 +16,24 @@ The United States is going through a overhaul of period care access
     limit 2
 ```
 
-
-
 ```bills_monthly
-select
-  date_trunc('month', last_action_date) as month,
-  count(DISTINCT bill_id) as total_bills
-from bills
-group by month
-order by month desc
+SELECT
+  last_action_date,
+  COUNT(DISTINCT bill_id) AS total_bills,
+  SUM(COUNT(DISTINCT bill_id)) OVER (ORDER BY last_action_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS rolling_total_bills
+FROM bills
+GROUP BY last_action_date
+ORDER BY last_action_date;
 ```
+
+<!-- FIXME Not over time -->
+<LineChart
+  data={bills_monthly}
+  x=last_action_date
+  y=rolling_total_bills
+  title="Bills in the United States"
+  subtitle="12 Month Rolling Total"
+/>
 
 ```bills_by_state
 select
@@ -36,14 +44,6 @@ from bills
 group by state
 ```
 
-<!-- FIXME Not over time -->
-<LineChart
-  data={bills_monthly}
-  x=month
-  y=total_bills
-  title="Bills in the United States"
-  subtitle="12 Month Rolling Total"
-/>
 <USMap
   data={bills_by_state}
   state=state_name
