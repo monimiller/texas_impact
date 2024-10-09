@@ -19,7 +19,7 @@ jobs:
 
       - name: Run pipeline script
         env:
-          APIKEY: ${{ secrets.APIKEY }}
+          APIKEY: ${{ secrets.LEGISCAN_APIKEY }}
         run: ./pipeline.bash
       - name: Commit CSV updates
         run: |
