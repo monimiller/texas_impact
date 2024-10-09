@@ -1,5 +1,7 @@
 ---
 title: Period Care Bills Tracker
+queries:
+   - bills_monthly: bills_monthly.sql
 ---
 
 The United States is going through a overhaul of period care access 
@@ -14,16 +16,6 @@ The United States is going through a overhaul of period care access
     -- where state = 'United States'
     order by date desc
     limit 2
-```
-
-```bills_monthly
-SELECT
-  last_action_date,
-  COUNT(DISTINCT bill_id) AS total_bills,
-  SUM(COUNT(DISTINCT bill_id)) OVER (ORDER BY last_action_date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS rolling_total_bills
-FROM bills
-GROUP BY last_action_date
-ORDER BY last_action_date;
 ```
 
 <!-- FIXME Not over time -->
