@@ -25,7 +25,7 @@ GROUP BY date_trunc('month', last_action_date)
 ORDER BY month DESC;
 ```
 
-<LineChart
+<AreaChart
    data={bills}
    x=month
    y=rolling_total_bills

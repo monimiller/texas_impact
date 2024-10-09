@@ -19,7 +19,7 @@ The United States is going through a overhaul of period care access
 ```
 
 <!-- FIXME Not over time -->
-<LineChart
+<AreaChart
   data={bills_monthly}
   x=last_action_date
   y=rolling_total_bills
