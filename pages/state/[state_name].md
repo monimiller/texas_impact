@@ -5,53 +5,45 @@ queries:
 
 # {params.state_name}
 
-
-```deaths
+```bills
 select
-  "State Name",
-  strptime(concat(Month, ' ', Year::int), '%B %Y') as date,
-  trim(regexp_replace(Indicator, '\\(.*?\\)', '')) as indicator_trimmed,
-  case
-    when indicator_trimmed = 'Number of Drug Overdose Deaths' then 'All Drugs'
-    else indicator_trimmed
-  end as indicator_clean,
-  "Data Value" as total_deaths
-from deaths
-where "State Name" = '${params.state_name}'
-and indicator_trimmed in ('Number of Drug Overdose Deaths')
+  state,
+  last_action_date as date,
+  bill_id as total_bills
+from bills
+where state = '${params.state_name}'
+order by date desc
+```
+
+```all_bills
+select
+  state,
+  last_action_date as date,
+  bill_number,
+  bill_id,
+  text_url,
+  last_action,
+  title
+from bills
+where state = '${params.state_name}'
 order by date desc
 ```
 
 <LineChart
-   data={deaths}
+   data={bills}
    x=date
-   y=total_deaths
-   title="Drug Overdose Deaths"
+   y=total_bills
+   title="Period Care Bills"
    subtitle="12 Month Rolling Total"
 />
 
-```sql indicator
-select
-  trim(regexp_replace(Indicator, '\\(.*?\\)', '')) as indicator_trimmed,
-  case
-      when indicator_trimmed = 'Number of Drug Overdose Deaths' then 'All Drugs'
-      else indicator_trimmed
-   end as indicator_clean,
-   sum("Data Value") as total_deaths
-from deaths
-where "State Name" = '${params.state_name}'
-   and indicator_clean not in ('Percent with drugs specified')
-   and Year = 2024
-   and Month = 'April'
-group by indicator_trimmed
-order by total_deaths desc
-```
 
-## Deaths by Indicator - April 2024, Last 12 Months
-
-<DataTable data={indicator} rows=all>
-<Column id=indicator_clean/>
-<Column id=total_deaths/>
+<DataTable data={all_bills} rows=all>
+<Column id=date/>
+<Column id=bill_number/>
+<Column id=title/>
+<Column id=last_action/>
+<Column id=text_url/>
 </DataTable>
 
 
