@@ -20,11 +20,11 @@ The United States is going through a overhaul of period care access
 
 ```bills_monthly
 select
-  last_action_date as date,
+  date_trunc('month', last_action_date) as month,
   count(DISTINCT bill_id) as total_bills
 from bills
-group by last_action_date
-order by date desc
+group by month
+order by month desc
 ```
 
 ```sql bills_by_state
@@ -44,7 +44,7 @@ order by date desc
 <!-- FIXME Not over time -->
 <LineChart
   data={bills_monthly}
-  x=date
+  x=month
   y=total_bills
   title="Bills in the United States"
   subtitle="12 Month Rolling Total"

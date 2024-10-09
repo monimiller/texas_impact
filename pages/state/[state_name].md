@@ -7,12 +7,12 @@ queries:
 
 ```bills
 select
-  state,
-  last_action_date as date,
-  bill_id as total_bills
+   date_trunc('month', last_action_date) as month,
+   count(DISTINCT bill_id) as total_bills
 from bills
 where state = '${params.state_name}'
-order by date desc
+group by month
+order by month desc
 ```
 
 ```all_bills
@@ -31,7 +31,7 @@ order by date desc
 
 <LineChart
    data={bills}
-   x=date
+   x=month
    y=total_bills
    title="Period Care Bills"
    subtitle="12 Month Rolling Total"
