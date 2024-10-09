@@ -22,17 +22,10 @@ limit 2
 
 ```bills_monthly
 select
-  "State Name",
-  strptime(concat(Month, ' ', Year::int), '%B %Y') as date,
-  trim(regexp_replace(Indicator, '\\(.*?\\)', '')) as indicator_trimmed,
-  case
-    when indicator_trimmed = 'Number of Drug Overdose Deaths' then 'All Drugs'
-    else indicator_trimmed
-  end as indicator_clean,
-  "Data Value" as total_deaths
-from deaths
-where "State Name" = 'United States'
-and indicator_clean = '${inputs.indicator.value}'
+  last_action_date as date,
+  count(DISTINCT bill_id) as total_bills
+from bills
+group by last_action_date
 order by date desc
 ```
 
@@ -41,7 +34,7 @@ order by date desc
    state,
    '/state/' || state as link,
    state,
-   sum(bill_id) as total_bills
+   count(DISTINCT bill_id) as total_bills
  from bills
  where state not in ('United States', 'Alaska', 'Hawaii')
   -- and extract(year from last_action_date) = 2024
@@ -50,6 +43,7 @@ order by date desc
  order by total_bills desc
 ```
 
+<!-- FIXME Not over time -->
 <LineChart
   data={bills_monthly}
   x=date
