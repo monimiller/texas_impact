@@ -8,7 +8,7 @@ while true; do
         --data-urlencode "key=$APIKEY" \
         --data-urlencode "op=getSearch" \
         --data-urlencode "state=ALL" \
-        --data-urlencode "year=1" \
+        --data-urlencode "year=2" \
         --data-urlencode "page=$page" \
         --data-urlencode "query=Feminine Hygiene" | jq -c '
             .searchresult |
@@ -33,12 +33,12 @@ while true; do
 
     echo "$data" | duckdb -c "
         CREATE TABLE new_bills AS
-        SELECT * FROM read_json_auto('/dev/stdin');
+        SELECT DISTINCT * FROM read_json_auto('/dev/stdin');
         
         CREATE TABLE IF NOT EXISTS bills AS
-        SELECT * FROM 'sources/legiscan/bills.csv';
+        SELECT DISTINCT * FROM 'sources/legiscan/bills.csv';
         
-        INSERT INTO bills SELECT * FROM new_bills;
+        INSERT INTO bills SELECT DISTINCT * FROM new_bills;
     
         COPY bills TO 'sources/legiscan/bills.csv' (HEADER, DELIMITER ',');
     "
