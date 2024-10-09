@@ -40,7 +40,7 @@ while true; do
         
         INSERT INTO bills SELECT DISTINCT * FROM new_bills;
     
-        COPY bills TO 'sources/legiscan/bills.csv' (HEADER, DELIMITER ',');
+        COPY (SELECT * FROM bills ORDER BY last_action_date) TO 'sources/legiscan/bills.csv' (HEADER, DELIMITER ',');
     "
 
     page=$((page + 1))
