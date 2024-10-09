@@ -36,11 +36,11 @@ while true; do
         SELECT DISTINCT * FROM read_json_auto('/dev/stdin');
         
         CREATE TABLE IF NOT EXISTS bills AS
-        SELECT DISTINCT * FROM 'sources/legiscan/bills.parquet';
+        SELECT DISTINCT * FROM 'sources/legiscan/bills.csv';
         
         INSERT INTO bills SELECT DISTINCT * FROM new_bills;
     
-        COPY (SELECT * FROM bills ORDER BY bill_id) TO 'sources/legiscan/bills.parquet' (FORMAT PARQUET);
+        COPY (SELECT * FROM bills ORDER BY bill_id) TO 'sources/legiscan/bills.csv' (HEADER, DELIMITER ',');
     "
 
     page=$((page + 1))
