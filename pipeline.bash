@@ -40,7 +40,7 @@ while true; do
         
         INSERT INTO bills SELECT DISTINCT * FROM new_bills;
     
-        COPY (SELECT * FROM bills ORDER BY last_action_date) TO 'sources/legiscan/bills.parquet' (FORMAT PARQUET);
+        COPY (SELECT * FROM bills ORDER BY bill_id) TO 'sources/legiscan/bills.parquet' (FORMAT PARQUET);
     "
 
     page=$((page + 1))
