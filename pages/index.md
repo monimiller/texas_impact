@@ -5,17 +5,15 @@ title: Period Care Bills Tracker
 The United States is going through a overhaul of period care access 
 
 ```bills_most_recent
-select
-  strptime(concat(Month, ' ', Year::int), '%B %Y') as date,
-  trim(regexp_replace(Indicator, '\\(.*?\\)', '')) as indicator_trimmed,
-  -- window function division of next row
-  "Data Value" / lead("Data Value") over (order by date) as pct_of_deaths,
-  "Data Value" as total_deaths
-from deaths
-where "State Name" = 'United States'
-and indicator_trimmed in ('Number of Drug Overdose Deaths', 'Number of Deaths')
-order by date desc
-limit 2
+    select
+      last_action_date as date,
+      -- Render something here
+      -- bill_id / lead(bill_id) over (order by date) as pct_of_bills,
+      -- bill_id as total_bills
+    from bills
+    -- where state = 'United States'
+    order by date desc
+    limit 2
 ```
 
 
