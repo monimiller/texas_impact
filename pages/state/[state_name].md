@@ -6,14 +6,23 @@ queries:
 # {params.state_name}
 
 ```bills
-select
-   date_trunc('month', last_action_date) as month,
-   count(DISTINCT bill_id) as total_bills
-from bills
-where state = '${params.state_name}'
-group by month
-order by month desc
+SELECT
+   date_trunc('month', last_action_date) AS month,
+   COUNT(DISTINCT bill_id) AS total_bills,
+   SUM(COUNT(DISTINCT bill_id)) OVER (ORDER BY date_trunc('month', last_action_date) ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS rolling_total_bills
+FROM bills
+WHERE state = '${params.state_name}'
+GROUP BY date_trunc('month', last_action_date)
+ORDER BY month DESC;
 ```
+
+<LineChart
+   data={bills}
+   x=month
+   y=rolling_total_bills
+   title="Period Care Bills"
+   subtitle="12 Month Rolling Total"
+/>
 
 ```all_bills
 select
@@ -28,15 +37,6 @@ from bills
 where state = '${params.state_name}'
 order by date desc
 ```
-
-<LineChart
-   data={bills}
-   x=month
-   y=total_bills
-   title="Period Care Bills"
-   subtitle="12 Month Rolling Total"
-/>
-
 
 <DataTable data={all_bills} rows=all>
 <Column id=date/>
