@@ -25,7 +25,9 @@ The United States is going through a overhaul of period care access
   y=rolling_total_bills
   title="Bills in the United States"
   subtitle="12 Month Rolling Total"
+  colorPalette={['#8789fe']}
 />
+
 
 ```bills_by_state
 select
@@ -43,4 +45,5 @@ group by state
   value=total_bills
   link=state_link
   title="Period Care Bills by State"
+  colorPalette={['white', '#8789fe']}
 />

@@ -3,6 +3,15 @@ queries:
    - state: state.sql
 ---
 
+<script>
+    let myColors = [
+        '#8789fe',
+        '#eb5752',
+        '#e88a87',
+        '#fcdad9',
+    ]
+</script>
+
 # {params.state_name}
 
 ```bills
@@ -22,6 +31,7 @@ ORDER BY month DESC;
    y=rolling_total_bills
    title="Period Care Bills"
    subtitle="12 Month Rolling Total"
+   colorPalette={myColors}
 />
 
 ```all_bills
