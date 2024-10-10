@@ -48,12 +48,11 @@ where state = '${params.state_name}'
 order by date desc
 ```
 
-<DataTable data={all_bills} rows=all>
-<Column id=date/>
-<Column id=bill_number/>
-<Column id=title/>
-<Column id=last_action/>
-<Column id=text_url/>
+<DataTable data={all_bills} rows=all search=true rowShading=true rowLines=false>
+  <Column id=date fmt="yyyy-mm-dd" title="Date" />
+  <Column id=text_url contentType=link linkLabel=bill_number title="Bill Number" wrapTitle=true />
+  <Column id=title wrap=true title="Title" />
+  <Column id=last_action title="Last Action" wrap=true />
 </DataTable>
 
 
