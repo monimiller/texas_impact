@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
 APIKEY="915b8d36efc1524035bf6336561b07e6"
+# Define search terms
+SEARCH_TERMS='"period care" OR "tampons" OR "feminine hygiene" OR "menstrual products"'
+EXCLUDE_TERMS='"contraception" OR "birth control" OR "incontinence" OR "cosmetics" OR "pharmaceuticals"'
+QUERY="($SEARCH_TERMS)" # AND NOT ($EXCLUDE_TERMS)"
+
 # Fetch bills related to Feminine Hygiene from LegiScan API
 page=1
 while true; do
@@ -10,7 +15,8 @@ while true; do
         --data-urlencode "state=ALL" \
         --data-urlencode "year=2" \
         --data-urlencode "page=$page" \
-        --data-urlencode "query=Feminine Hygiene" | jq -c '
+        --data-urlencode "query=$QUERY" \
+        | jq -c '
             .searchresult |
             to_entries[] |
             select(.key | tonumber? != null) |
