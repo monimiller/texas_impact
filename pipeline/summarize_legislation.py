@@ -60,8 +60,21 @@ def SummarizeBills(state, bill_texts):
     )
 
     response = message.content[0].text
+    print("AI Response:", response)  # Debug print
 
-    # Parse the response
+    # If the response doesn't contain tags, we'll treat the whole response as the zoomer_vibe
+    if (
+        "<summary>" not in response
+        and "<analysis>" not in response
+        and "<zoomer_vibe>" not in response
+    ):
+        return {
+            "summary": "",
+            "analysis": "",
+            "zoomer_vibe": response.strip(),
+        }
+
+    # Parse the response if tags are present
     summary = re.search(r"<summary>(.*?)</summary>", response, re.DOTALL)
     analysis = re.search(r"<analysis>(.*?)</analysis>", response, re.DOTALL)
     zoomer_vibe = re.search(r"<zoomer_vibe>(.*?)</zoomer_vibe>", response, re.DOTALL)
@@ -69,7 +82,9 @@ def SummarizeBills(state, bill_texts):
     return {
         "summary": summary.group(1).strip() if summary else "",
         "analysis": analysis.group(1).strip() if analysis else "",
-        "zoomer_vibe": zoomer_vibe.group(1).strip() if zoomer_vibe else "",
+        "zoomer_vibe": zoomer_vibe.group(1).strip()
+        if zoomer_vibe
+        else response.strip(),
     }
 
 
@@ -103,7 +118,11 @@ def main():
                     f"Bill {bill['bill_number']}: {text[:1000]}..."
                 )  # Truncate to first 1000 chars
 
+        print(" ".join(bill_texts))
+
         vibe = SummarizeBills(state, " ".join(bill_texts))
+        print("Vibe result:", vibe)  # Debug print
+
         results = results.vstack(
             pl.DataFrame(
                 {
