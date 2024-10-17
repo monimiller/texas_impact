@@ -11,6 +11,8 @@ import requests
 import dspy
 import time
 import os
+import hashlib
+import json
 
 # Set up DSPy
 lm = dspy.LM("claude-3-5-sonnet-20240620")
@@ -20,10 +22,6 @@ dspy.configure(lm=lm)
 LEGISCAN_API_KEY = os.getenv("LEGISCAN_API_KEY")
 if not LEGISCAN_API_KEY:
     raise ValueError("LEGISCAN_API_KEY environment variable is not set")
-
-
-import hashlib
-import json
 
 
 def get_cache_filename(bill_id):
