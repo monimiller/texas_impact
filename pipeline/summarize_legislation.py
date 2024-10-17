@@ -21,7 +21,22 @@ if not LEGISCAN_API_KEY:
     raise ValueError("LEGISCAN_API_KEY environment variable is not set")
 
 
+import hashlib
+import json
+
+
+def get_cache_filename(bill_id):
+    return f".cache/{hashlib.md5(bill_id.encode()).hexdigest()}.json"
+
+
 def fetch_bill_text(bill_id):
+    cache_filename = get_cache_filename(bill_id)
+
+    # Check if the response is cached
+    if os.path.exists(cache_filename):
+        with open(cache_filename, "r") as cache_file:
+            return json.load(cache_file)
+
     try:
         # https://api.legiscan.com/?key=APIKEY&op=getBill&id=BILL_ID
         response = requests.get(
@@ -29,7 +44,14 @@ def fetch_bill_text(bill_id):
             params={"key": LEGISCAN_API_KEY, "op": "getBill", "id": bill_id},
         )
         response.raise_for_status()
-        return response.text
+        bill_text = response.text
+
+        # Cache the response
+        os.makedirs(".cache", exist_ok=True)
+        with open(cache_filename, "w") as cache_file:
+            json.dump(bill_text, cache_file)
+
+        return bill_text
     except requests.RequestException as e:
         print(f"Error fetching bill text: {e}")
         return None
