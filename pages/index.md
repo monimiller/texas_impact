@@ -1,7 +1,7 @@
 ---
 title: Period Care Bills Tracker
 queries:
-   - bills_monthly: bills_monthly.sql
+  - bills_monthly: bills_monthly.sql
 ---
 
 The United States is going through a overhaul of period care access 
