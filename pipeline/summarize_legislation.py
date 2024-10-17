@@ -13,7 +13,7 @@ import time
 import os
 
 # Set up DSPy
-lm = dspy.LM("openai/gpt-4o")
+lm = dspy.LM("claude-3-5-sonnet-20240620")
 dspy.configure(lm=lm)
 
 # Get the Legiscan API key from the environment
