@@ -3,6 +3,7 @@
 # dependencies = [
 #   "requests",
 #   "anthropic",
+#   "polars",
 # ]
 # ///
 
@@ -13,25 +14,14 @@ import time
 import os
 import hashlib
 import json
+import polars as pl
 
 # Get the Legiscan API key from the environment
 LEGISCAN_API_KEY = os.getenv("LEGISCAN_API_KEY")
 if not LEGISCAN_API_KEY:
     raise ValueError("LEGISCAN_API_KEY environment variable is not set")
 
-
-def get_cache_filename(bill_id):
-    return f".cache/{hashlib.md5(bill_id.encode()).hexdigest()}.json"
-
-
 def fetch_bill_text(bill_id):
-    cache_filename = get_cache_filename(bill_id)
-
-    # Check if the response is cached
-    if os.path.exists(cache_filename):
-        with open(cache_filename, "r") as cache_file:
-            return json.load(cache_file)
-
     try:
         # https://api.legiscan.com/?key=APIKEY&op=getBill&id=BILL_ID
         response = requests.get(
@@ -39,14 +29,7 @@ def fetch_bill_text(bill_id):
             params={"key": LEGISCAN_API_KEY, "op": "getBill", "id": bill_id},
         )
         response.raise_for_status()
-        bill_text = response.text
-
-        # Cache the response
-        os.makedirs(".cache", exist_ok=True)
-        with open(cache_filename, "w") as cache_file:
-            json.dump(bill_text, cache_file)
-
-        return bill_text
+        return response.text
     except requests.RequestException as e:
         print(f"Error fetching bill text: {e}")
         return None
@@ -83,19 +66,24 @@ def SummarizeBills(state, bill_texts):
 
 def main():
     states = {}
-    with open("../sources/legiscan/bills.csv", "r") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            if row["state"] not in states:
-                states[row["state"]] = []
-            states[row["state"]].append(row)
+    bills = pl.read_csv("../sources/legiscan/bills.csv")
 
-    results = []
+    results = pl.DataFrame(
+        {"state": pl.Series([], dtype=pl.Utf8), "vibe": pl.Series([], dtype=pl.Utf8)}
+    )
 
-    for state, bills in states.items():
+    # Sort states from least number of bills to most
+    state_bill_counts = bills.group_by("state").agg(
+        pl.count("bill_id").alias("bill_count")
+    )
+    sorted_states = state_bill_counts.sort("bill_count").select("state")
+
+    for state in sorted_states["state"]:
         print(f"Processing {state}...")
+        state_bills = bills.filter(pl.col("state") == state)
         bill_texts = []
-        for bill in bills:
+
+        for bill in state_bills.iter_rows(named=True):
             text = fetch_bill_text(bill["bill_id"])
             if text:
                 bill_texts.append(
@@ -103,15 +91,14 @@ def main():
                 )  # Truncate to first 1000 chars
 
         vibe = SummarizeBills(state, " ".join(bill_texts))
-        results.append({"state": state, "vibe": vibe})
+        results = results.vstack(pl.DataFrame({"state": [state], "vibe": [vibe]}))
         time.sleep(1)  # Be nice to the API
 
-        with open(
-            "../sources/generated/state_period_care_vibes.csv", "w", newline=""
-        ) as file:
-            writer = csv.DictWriter(file, fieldnames=["state", "vibe"])
-            writer.writeheader()
-            writer.writerows(results)
+        results.write_csv(
+            "../sources/generated/state_period_care_vibes.csv",
+            separator=",",
+            include_header=True,
+        )
 
 
 if __name__ == "__main__":
