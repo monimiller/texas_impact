@@ -13,7 +13,8 @@ import time
 import os
 
 # Set up DSPy
-dspy.settings.configure(lm=dspy.OpenAI(model="gpt-3.5-turbo"))
+lm = dspy.LM("openai/gpt-4o")
+dspy.configure(lm=lm)
 
 # Get the Legiscan API key from the environment
 LEGISCAN_API_KEY = os.getenv("LEGISCAN_API_KEY")
