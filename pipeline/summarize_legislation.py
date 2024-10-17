@@ -104,12 +104,12 @@ def main():
         results.append({"state": state, "vibe": vibe})
         time.sleep(1)  # Be nice to the API
 
-    with open(
-        "../sources/generated/state_period_care_vibes.csv", "w", newline=""
-    ) as file:
-        writer = csv.DictWriter(file, fieldnames=["state", "vibe"])
-        writer.writeheader()
-        writer.writerows(results)
+        with open(
+            "../sources/generated/state_period_care_vibes.csv", "w", newline=""
+        ) as file:
+            writer = csv.DictWriter(file, fieldnames=["state", "vibe"])
+            writer.writeheader()
+            writer.writerows(results)
 
 
 if __name__ == "__main__":
