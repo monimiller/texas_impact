@@ -2,21 +2,17 @@
 # requires-python = "<3.13"
 # dependencies = [
 #   "requests",
-#   "dspy-ai",
+#   "anthropic",
 # ]
 # ///
 
+import anthropic
 import csv
 import requests
-import dspy
 import time
 import os
 import hashlib
 import json
-
-# Set up DSPy
-lm = dspy.LM("claude-3-5-sonnet-20240620")
-dspy.configure(lm=lm)
 
 # Get the Legiscan API key from the environment
 LEGISCAN_API_KEY = os.getenv("LEGISCAN_API_KEY")
@@ -56,24 +52,33 @@ def fetch_bill_text(bill_id):
         return None
 
 
-class SummarizeBills(dspy.Signature):
+def SummarizeBills(state, bill_texts):
     """Analyze bills related to period care and feminine hygiene products."""
 
-    state = dspy.InputField()
-    bill_texts = dspy.InputField()
-    vibe = dspy.OutputField(
-        desc="Overall 'vibe' or sentiment of the legislation for period care in this state"
+    client = anthropic.Anthropic(
+        # defaults to os.environ.get("ANTHROPIC_API_KEY")
+        # api_key="my_api_key",
     )
 
-
-class BillAnalyzer(dspy.Module):
-    def __init__(self):
-        super().__init__()
-        self.summarize = dspy.Predict(SummarizeBills)
-
-    def forward(self, state, bill_texts):
-        result = self.summarize(state=state, bill_texts=bill_texts)
-        return result.vibe
+    # Replace placeholders like {{JSON_INPUT}} with real values,
+    # because the SDK does not support variables.
+    message = client.messages.create(
+        model="claude-3-5-sonnet-20240620",
+        max_tokens=1000,
+        temperature=0,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": f'You will be summarizing and analyzing legislative information about period care mandates for a specific state. The information is provided in a JSON format. Your task is to summarize the documents and legislative links, then provide an overall assessment of the state\'s support for menstrual care accessibility in a fun "Zoomer" tone.\n\nHere\'s the JSON input containing the legislative information:\n\n<json_input>\n{bill_texts}\n</json_input>\n\nFollow these steps to complete the task:\n\n1. Parse the JSON input and extract the relevant information about bills, documents, and legislative links related to period care mandates.\n\n2. Summarize each bill and document briefly, focusing on key points such as:\n   - The main purpose of the bill\n   - Proposed changes or mandates\n   - Target locations (e.g., schools, public buildings)\n   - Any specific products or services mentioned\n\n3. Analyze the overall legislative support for menstrual care accessibility in the state by considering:\n   - The number of bills proposed\n   - The content and intent of the bills\n   - Any patterns or trends in the legislation\n   - The current status of the bills (e.g., passed, pending, failed)\n\n4. Based on your analysis, determine whether the state appears to be supportive, neutral, or unsupportive of menstrual care accessibility.\n\n5. Prepare a summary of your findings in a fun "Zoomer" tone. This means:\n   - Use casual, conversational language\n   - Include relevant slang or internet-speak (e.g., "ngl", "fr", "lowkey")\n   - Add some humor or playful comments\n   - Use emojis sparingly but effectively\n   - Keep it brief and to the point\n\n6. Structure your response as follows:\n\n<summary>\n[Insert your summary of the bills and documents here]\n</summary>\n\n<analysis>\n[Insert your analysis of the overall legislative support here]\n</analysis>\n\n<zoomer_vibe>\n[Insert your fun "Zoomer" tone summary here]\n</zoomer_vibe>\n\nRemember to maintain accuracy and respect for the subject matter while adopting the "Zoomer" tone in the final section.',
+                    }
+                ],
+            }
+        ],
+    )
+    print(message.content)
 
 
 def main():
@@ -85,7 +90,6 @@ def main():
                 states[row["state"]] = []
             states[row["state"]].append(row)
 
-    analyzer = BillAnalyzer()
     results = []
 
     for state, bills in states.items():
@@ -98,7 +102,7 @@ def main():
                     f"Bill {bill['bill_number']}: {text[:1000]}..."
                 )  # Truncate to first 1000 chars
 
-        vibe = analyzer(state, " ".join(bill_texts))
+        vibe = SummarizeBills(state, " ".join(bill_texts))
         results.append({"state": state, "vibe": vibe})
         time.sleep(1)  # Be nice to the API
 
