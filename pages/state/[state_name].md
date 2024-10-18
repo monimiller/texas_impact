@@ -17,8 +17,8 @@ queries:
 ```bills
 SELECT
    date_trunc('month', last_action_date) AS month,
-   COUNT(DISTINCT bill_id) AS total_bills,
-   SUM(COUNT(DISTINCT bill_id)) OVER (ORDER BY date_trunc('month', last_action_date) ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS rolling_total_bills
+   COUNT(DISTINCT bill_number) AS total_bills,
+   SUM(COUNT(DISTINCT bill_number)) OVER (ORDER BY date_trunc('month', last_action_date) ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS rolling_total_bills
 FROM bills
 WHERE state = '${params.state_name}'
 GROUP BY date_trunc('month', last_action_date)
