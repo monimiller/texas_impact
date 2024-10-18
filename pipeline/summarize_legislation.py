@@ -82,9 +82,7 @@ def SummarizeBills(state, bill_texts):
     return {
         "summary": summary.group(1).strip() if summary else "",
         "analysis": analysis.group(1).strip() if analysis else "",
-        "zoomer_vibe": zoomer_vibe.group(1).strip()
-        if zoomer_vibe
-        else response.strip(),
+        "zoomer_vibe": zoomer_vibe.group(1).strip() if zoomer_vibe else response,
     }
 
 
@@ -151,13 +149,23 @@ def main():
             )
         )
         time.sleep(1)  # Be nice to the API
+        # Escape newlines in the summary, analysis, and zoomer_vibe fields
+        # results = results.with_columns(
+        #     [
+        #         pl.col("summary").map(lambda x: x.encode("unicode_escape").decode()),
+        #         pl.col("analysis").map(lambda x: x.encode("unicode_escape").decode()),
+        #         pl.col("zoomer_vibe").map(
+        #             lambda x: x.encode("unicode_escape").decode()
+        #         ),
+        #     ]
+        # )
 
         results.write_csv(
             "../sources/generated/state_period_care_vibes.csv",
             separator=",",
             include_header=True,
             quote_char='"',
-            escape_char="\\",
+            quote_style="always",
         )
 
 
