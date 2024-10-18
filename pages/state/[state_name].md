@@ -34,6 +34,43 @@ ORDER BY month DESC;
    colorPalette={myColors}
 />
 
+```get_state_summary
+select
+  state as state_name,
+  summary,
+  analysis,
+  zoomer_vibe,
+from generated.state_period_care_vibes
+where state = '${params.state_name}'
+```
+
+<Details title="Summary">
+
+<Value 
+   data={get_state_summary}
+   column=summary
+/>   
+
+</Details>
+
+<Details title="Analysis">
+
+<Value 
+   data={get_state_summary}
+   column=analysis
+/>   
+
+</Details>
+
+<Details title="Vibes">
+
+<Value 
+   data={get_state_summary}
+   column=zoomer_vibe
+/>   
+
+</Details>
+
 ```all_bills
 select
   state,
@@ -54,5 +91,4 @@ order by date desc
   <Column id=title wrap=true title="Title" />
   <Column id=last_action title="Last Action" wrap=true />
 </DataTable>
-
 
