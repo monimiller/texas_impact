@@ -1,3 +1,4 @@
+#!/usr/bin/env -S uv run
 # /// script
 # requires-python = "<3.13"
 # dependencies = [
@@ -18,8 +19,8 @@ import polars as pl
 import re
 
 # Get the Legiscan API key from the environment
-LEGISCAN_API_KEY = os.getenv("LEGISCAN_API_KEY")
-if not LEGISCAN_API_KEY:
+LEGISCAN_APIKEY = os.getenv("LEGISCAN_APIKEY")
+if not LEGISCAN_APIKEY:
     raise ValueError("LEGISCAN_API_KEY environment variable is not set")
 
 
@@ -28,7 +29,7 @@ def fetch_bill_text(bill_id):
         # https://api.legiscan.com/?key=APIKEY&op=getBill&id=BILL_ID
         response = requests.get(
             "https://api.legiscan.com/",
-            params={"key": LEGISCAN_API_KEY, "op": "getBill", "id": bill_id},
+            params={"key": LEGISCAN_APIKEY, "op": "getBill", "id": bill_id},
         )
         response.raise_for_status()
         return response.json()
@@ -87,7 +88,7 @@ def SummarizeBills(state, bill_texts):
 
 
 def main():
-    bills = pl.read_csv("../sources/legiscan/bills.csv")
+    bills = pl.read_csv("./sources/legiscan/bills.csv")
 
     results = pl.DataFrame(
         {
@@ -161,7 +162,7 @@ def main():
         # )
 
         results.write_csv(
-            "../sources/generated/state_period_care_vibes.csv",
+            "./sources/generated/state_period_care_vibes.csv",
             separator=",",
             include_header=True,
             quote_char='"',

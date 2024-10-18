@@ -1,0 +1,30 @@
+name: Run Summaries
+
+on:
+  schedule:
+    - cron: "0 0 1 * *" # Runs once a month
+  workflow_dispatch:
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+      - name: Run pipeline script
+        env:
+          LEGISCAN_APIKEY: ${{ secrets.LEGISCAN_APIKEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: ./pipeline/summarize_legislation.py
+      - name: Commit CSV updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Automated update"
+          git push
