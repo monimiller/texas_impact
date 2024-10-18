@@ -31,7 +31,7 @@ def fetch_bill_text(bill_id):
             params={"key": LEGISCAN_API_KEY, "op": "getBill", "id": bill_id},
         )
         response.raise_for_status()
-        return response.text
+        return response.json()
     except requests.RequestException as e:
         print(f"Error fetching bill text: {e}")
         return None
@@ -111,12 +111,29 @@ def main():
         state_bills = bills.filter(pl.col("state") == state)
         bill_texts = []
 
+        # Parse out the actual bill text from the legiscan response
         for bill in state_bills.iter_rows(named=True):
-            text = fetch_bill_text(bill["bill_id"])
-            if text:
-                bill_texts.append(
-                    f"Bill {bill['bill_number']}: {text[:1000]}..."
-                )  # Truncate to first 1000 chars
+            bill_json = fetch_bill_text(bill["bill_id"])
+            if bill_json:
+                print("Bill info:", bill_json)
+                # Extract relevant information from the API response
+                bill_info = bill_json.get("bill", {})
+                bill_title = bill_info.get("title", "")
+                bill_description = bill_info.get("description", "")
+                # TODO Could read PDFs in
+                # bill_texts = bill_info.get("texts", [])
+
+                # Combine the relevant information
+                combined_text = (
+                    f"Title: {bill_title}\nDescription: {bill_description}\n"
+                )
+
+                # Truncate the combined text to a reasonable length
+                truncated_text = combined_text[
+                    :2000
+                ]  # Increased from 1000 to 2000 chars
+
+                bill_texts.append(f"Bill {bill['bill_number']}:\n{truncated_text}")
 
         print(" ".join(bill_texts))
 
@@ -139,6 +156,8 @@ def main():
             "../sources/generated/state_period_care_vibes.csv",
             separator=",",
             include_header=True,
+            quote_char='"',
+            escape_char="\\",
         )
 
 
