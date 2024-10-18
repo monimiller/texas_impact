@@ -61,7 +61,6 @@ def SummarizeBills(state, bill_texts):
     )
 
     response = message.content[0].text
-    print("AI Response:", response)  # Debug print
 
     # If the response doesn't contain tags, we'll treat the whole response as the zoomer_vibe
     if (
@@ -114,7 +113,7 @@ def main():
         for bill in state_bills.iter_rows(named=True):
             bill_json = fetch_bill_text(bill["bill_id"])
             if bill_json:
-                print("Bill info:", bill_json)
+                # DEBUG print("Bill info:", bill_json)
                 # Extract relevant information from the API response
                 bill_info = bill_json.get("bill", {})
                 bill_title = bill_info.get("title", "")
@@ -134,10 +133,9 @@ def main():
 
                 bill_texts.append(f"Bill {bill['bill_number']}:\n{truncated_text}")
 
-        print(" ".join(bill_texts))
+        # DEBUG print(" ".join(bill_texts))
 
         vibe = SummarizeBills(state, " ".join(bill_texts))
-        print("Vibe result:", vibe)  # Debug print
 
         results = results.vstack(
             pl.DataFrame(
