@@ -1,17 +1,23 @@
 name: Run Summaries
 
 on:
-  schedule:
-    - cron: "0 0 1 * *" # Runs once a month
+  # schedule:
+  #   - cron: "0 0 1 * *" # Runs once a month
   workflow_dispatch:
 
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
 
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v3
         with:
@@ -21,10 +27,4 @@ jobs:
           LEGISCAN_APIKEY: ${{ secrets.LEGISCAN_APIKEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: ./pipeline/summarize_legislation.py
-      - name: Commit CSV updates
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Automated update"
-          git push
+      - uses: stefanzweifel/git-auto-commit-action@v5

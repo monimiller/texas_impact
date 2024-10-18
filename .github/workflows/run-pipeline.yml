@@ -9,24 +9,23 @@ jobs:
   run-pipeline:
     runs-on: ubuntu-latest
 
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
         # Run data pipeline
       - name: Install jq
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
       - uses: opt-nc/setup-duckdb-action@v1.0.8
-
       - name: Run pipeline script
         env:
           APIKEY: ${{ secrets.LEGISCAN_APIKEY }}
         run: ./pipeline.bash
-      - name: Commit CSV updates
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Automated update"
-          git push
+      - uses: stefanzweifel/git-auto-commit-action@v5
