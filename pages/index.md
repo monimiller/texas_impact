@@ -18,7 +18,7 @@ The United States is going through a overhaul of period care access
     limit 2
 ```
 
-<!-- FIXME Not over time -->
+<!-- series=category -->
 <AreaChart
   data={bills_monthly}
   x=last_action_date
@@ -47,3 +47,5 @@ group by state
   title="Period Care Bills by State"
   colorPalette={['white', '#8789fe']}
 />
+
+<LastRefreshed prefix="Data last updated"/>

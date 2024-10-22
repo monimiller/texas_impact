@@ -92,3 +92,4 @@ order by date desc
   <Column id=last_action title="Last Action" wrap=true />
 </DataTable>
 
+<LastRefreshed prefix="Data last updated"/>

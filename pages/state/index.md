@@ -17,3 +17,5 @@ order by total_bills desc
     <Column id=state_name />
     <Column id=total_bills contentType=colorscale scaleColor={['white', '#8789fe']} />
 </DataTable>
+
+<LastRefreshed prefix="Data last updated"/>
