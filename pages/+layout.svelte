@@ -8,9 +8,8 @@
 <EvidenceDefaultLayout
 	{data}
 	githubRepo="https://github.com/edmundmiller/periodic_legislation"
-	logo="/periodic_logo.jpg"
 	builtWithEvidence="true"
-	title="Periodic Legislation Tracker"
+	title="Periodic Bill Tracker"
 >
 	<slot slot="content" />
 </EvidenceDefaultLayout>
