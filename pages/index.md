@@ -4,7 +4,12 @@ queries:
   - bills_monthly: bills_monthly.sql
 ---
 
-The United States is going through a overhaul of period care access 
+## **28 states** require free period products in various public restrooms
+
+Are you compliant?
+
+[Get Periodic!](https://www.getperiodic.org/periodicproducts)
+
 
 ```bills_most_recent
     select
