@@ -42,6 +42,7 @@ from bills
 group by state
 ```
 
+<!-- BUG: https://github.com/evidence-dev/evidence/issues/2908 -->
 <USMap
   data={bills_by_state}
   state=state_name
@@ -49,6 +50,7 @@ group by state
   value=total_bills
   link=state_link
   title="Period Care Bills by State"
+  colorScale=default
 />
 
 <LastRefreshed prefix="Data last updated"/>
