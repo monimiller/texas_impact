@@ -1,6 +1,44 @@
+# Appearance settings
 appearance:
   default: system
   switcher: true
+
+theme:
+  # UI Colors
+  colors:
+    primary:
+      light: "#8789fe"
+      dark: "#a5b4fc"
+    accent:
+      light: "#6366f1"
+      dark: "#818cf8"
+    background:
+      light: "white"
+      dark: "#1f2937"
+    content:
+      light: "#1f2937"
+      dark: "#f9fafb"
+  # Color palettes for charts with different data series
+  colorPalettes:
+    default:
+      light:
+        - "#8789fe"  # Main purple color from your charts
+        - "#6366f1"
+        - "#4f46e5"
+        - "#4338ca"
+      dark:
+        - "#a5b4fc"  # Lighter versions for dark mode
+        - "#818cf8"
+        - "#6366f1"
+        - "#4f46e5"
+
+  # Color scales for continuous data (like your DataTable and US Map)
+  colorScales:
+    default:
+        - "white"
+        - "#8789fe"  # Using your main purple color for consistency
+
+
 plugins:
   components:
     # This loads all of evidence's core charts and UI components

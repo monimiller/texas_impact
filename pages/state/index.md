@@ -15,7 +15,7 @@ order by total_bills desc
 
 <DataTable data={state_with_link} link=link rows=all>
     <Column id=state_name />
-    <Column id=total_bills contentType=colorscale scaleColor={['white', '#8789fe']} />
+    <Column id=total_bills contentType=colorscale colorScale=positive />
 </DataTable>
 
 <LastRefreshed prefix="Data last updated"/>

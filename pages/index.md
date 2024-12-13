@@ -30,7 +30,6 @@ Are you compliant?
   y=rolling_total_bills
   title="Bills in the United States"
   subtitle="12 Month Rolling Total"
-  colorPalette={['#8789fe']}
 />
 
 
@@ -50,7 +49,6 @@ group by state
   value=total_bills
   link=state_link
   title="Period Care Bills by State"
-  colorPalette={['white', '#8789fe']}
 />
 
 <LastRefreshed prefix="Data last updated"/>
