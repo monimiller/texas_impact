@@ -10,28 +10,13 @@ Are you compliant?
 
 [Get Periodic!](https://www.getperiodic.org/periodicproducts)
 
-
-```bills_most_recent
-    select
-      last_action_date as date,
-      -- Render something here
-      -- bill_id / lead(bill_id) over (order by date) as pct_of_bills,
-      -- bill_id as total_bills
-    from bills
-    -- where state = 'United States'
-    order by date desc
-    limit 2
-```
-
-<!-- series=category -->
 <AreaChart
   data={bills_monthly}
-  x=last_action_date
+  x=month
   y=rolling_total_bills
   title="Bills in the United States"
-  subtitle="12 Month Rolling Total"
+  subtitle="Rolling Total"
 />
-
 
 ```bills_by_state
 select
