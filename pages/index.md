@@ -10,19 +10,19 @@ Are you compliant?
 
 ```sql date_options
 SELECT 
-  DISTINCT date_trunc('year', last_action_date)::date as year
+  last_action_date
 FROM legiscan.bills
-WHERE last_action_date >= '2020-01-01'
-ORDER BY year DESC
+WHERE last_action_date >= '2009-01-01'
+ORDER BY last_action_date DESC
 ```
 
-<Dropdown
-name=selected_year
-data={date_options}
-value=year
->
-<DropdownOption value="2020-01-01" valueLabel="All Time (Since 2020)"/>
-</Dropdown>
+<DateRange
+    name=selected_timeframe
+    data={date_options}
+    dates=last_action_date
+    defaultValue="Last 12 Months"
+/>
+
 
 ```bills_monthly
 SELECT
@@ -34,11 +34,12 @@ SELECT
   ) AS rolling_total_bills
 FROM legiscan.bills
 WHERE 
-  last_action_date >= '${inputs.selected_year.value}'
-  AND last_action_date <= CURRENT_DATE
+  last_action_date >= '${inputs.selected_timeframe.start}'
+  AND last_action_date <= '${inputs.selected_timeframe.end}'
 GROUP BY date_trunc('month', last_action_date)
 ORDER BY month
 ```
+
 <AreaChart
 data={bills_monthly}
 x=month
@@ -53,6 +54,9 @@ state as state_name,
 '/state/' || state as state_link,
 count(DISTINCT bill_id) as total_bills
 from bills
+WHERE 
+  last_action_date >= '${inputs.selected_timeframe.start}'
+  AND last_action_date <= '${inputs.selected_timeframe.end}'
 group by state
 ```
 
