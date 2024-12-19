@@ -1,5 +1,7 @@
 ---
 title: Period Care Bills Tracker
+queries:
+  - bills_monthly.sql
 ---
 
 ## **28 states** require free period products in various public restrooms
@@ -23,29 +25,12 @@ ORDER BY last_action_date DESC
     defaultValue="Last 12 Months"
 />
 
-
-```bills_monthly
-SELECT
-  date_trunc('month', last_action_date) AS month,
-  COUNT(DISTINCT bill_number) AS total_bills,
-  SUM(COUNT(DISTINCT bill_number)) OVER (
-    ORDER BY date_trunc('month', last_action_date) 
-    ROWS BETWEEN 11 PRECEDING AND CURRENT ROW
-  ) AS rolling_total_bills
-FROM legiscan.bills
-WHERE 
-  last_action_date >= '${inputs.selected_timeframe.start}'
-  AND last_action_date <= '${inputs.selected_timeframe.end}'
-GROUP BY date_trunc('month', last_action_date)
-ORDER BY month
-```
-
 <AreaChart
 data={bills_monthly}
 x=month
 y=rolling_total_bills
-title="Bills in the United States"
-subtitle="12 Month Rolling Total"
+title="Cumulative Period Care Bills in the United States"
+subtitle="Total Bills Introduced"
 />
 
 ```bills_by_state
