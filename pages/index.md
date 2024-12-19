@@ -27,7 +27,7 @@ ORDER BY last_action_date DESC
 
 <AreaChart
 data={bills_monthly}
-x=month
+x=day
 y=rolling_total_bills
 title="Cumulative Period Care Bills in the United States"
 subtitle="Total Bills Introduced"
