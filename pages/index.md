@@ -4,7 +4,7 @@ queries:
   - bills_monthly.sql
 ---
 
-## **28 states** require free period products in various public restrooms
+## **Most states** require free period products in various public restrooms
 
 Are you compliant?
 
