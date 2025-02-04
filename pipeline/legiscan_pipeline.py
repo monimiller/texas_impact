@@ -1,4 +1,12 @@
-
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = "<3.13"
+# dependencies = [
+#   "requests",
+#   "dlt[duckdb]>=1.0.0",
+#   "pandas>=2.0.0",
+# ]
+# ///
 import dlt
 import pandas as pd
 import requests
