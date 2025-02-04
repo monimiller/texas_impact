@@ -4,12 +4,15 @@
 # dependencies = [
 #   "requests",
 #   "pandas>=2.0.0",
+#   "python-dotenv",
 # ]
 # ///
+import os
 import pandas as pd
 import requests
 from typing import Dict, List
 from urllib.parse import urlencode
+from dotenv import load_dotenv
 
 def fetch_monitored_bills(api_key: str) -> List[Dict]:
     """Fetch all monitored bills from Legiscan API"""
@@ -37,8 +40,14 @@ def fetch_monitored_bills(api_key: str) -> List[Dict]:
     return []
 
 def main():
-    # API key
-    api_key = ""
+    # Load environment variables
+    load_dotenv()
+    
+    # Get API key from environment
+    api_key = os.getenv('LEGISCAN_API_KEY')
+    if not api_key:
+        print("Error: LEGISCAN_API_KEY not found in environment variables")
+        return
     
     # Fetch all monitored bills
     print("Fetching monitored bills...")
