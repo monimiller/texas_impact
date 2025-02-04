@@ -1,4 +1,5 @@
 ## Human Rights - Support
+
 ● HB 395, HB 965, & SB 257 (Identical bills)
 ○ Exception to and the repeal of certain laws prohibiting abortions. Exceptions are:
 pregnancy resulted from sexual assault. Does not require a patient to file a police
@@ -22,7 +23,9 @@ well-being; or the pregnancy resulted from sexual assault.
 ○ Repeals laws prohibiting abortion. Title 71, Health--Public Chapter 6-1/2, Abortion;
 Chapter 170A, Health and Safety Code.
 ○
+
 ## Human Rights - Oppose
+
 ● SB 466
 ○ Fetal death certificates. Allows family members to request a death certificate for a
 fetus of any weight or gestational age. The current law has gestation and/or weight
@@ -46,7 +49,9 @@ grounds.
 through an Internet website. Allows for mailed/delivered abortion-inducing drugs if
 there is verification that the person has a physician in Texas prescribing the
 medication to that person following an in-person medical exam.
+
 ## Economic Justice - Support
+
 ● HB 257 & SB 256
 ○ Exceptions to and repeal of certain laws prohibiting abortion. Changes language to
 “physician’s best medical judgement” rather than “exercise of reasonable medical
@@ -76,7 +81,9 @@ high-risk condition or the pregnancy resulted from IVF.
 medical treatments (abortions). Adds exception for “any other pregnancy complication
 that has been diagnosed by a physician and that has a substantial likelihood of
 causing serious bodily injury.
+
 ## Economic Justice Oppose
+
 ● HB 427
 ○ Allows a pregnant person to use the High Occupancy Vehicle lane even if there are
 no other passengers. Establishes fetal personhood by making the fetus of the driver
