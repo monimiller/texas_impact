@@ -3,68 +3,56 @@
 # requires-python = "<3.13"
 # dependencies = [
 #   "requests",
-#   "dlt[duckdb]>=1.0.0",
 #   "pandas>=2.0.0",
 # ]
 # ///
-import dlt
 import pandas as pd
 import requests
-from typing import Dict, Iterator
+from typing import Dict, List
 
-# Initialize pipeline
-pipeline = dlt.pipeline(pipeline_name="legiscan", destination='duckdb', dataset_name='bills_data')
-
-@dlt.source
-def legiscan_source(api_key: str):
-    """
-    DLT source for Legiscan API data
-    """
-    
-    @dlt.resource(
-        write_disposition="replace",
-        primary_key=["bill_id"]
+def fetch_bill_details(bill_number: str, api_key: str) -> Dict:
+    """Fetch bill details from Legiscan API"""
+    response = requests.get(
+        'https://api.legiscan.com/',
+        params={
+            'key': api_key,
+            'op': 'getBill',
+            'id': bill_number
+        }
     )
-    def get_bills(bills_csv: str) -> Iterator[Dict]:
-        """
-        Resource that reads bills from CSV and fetches their details from Legiscan
-        """
-        # Read bills from CSV
-        df = pd.read_csv(bills_csv)
-        
-        # For each bill
-        for _, row in df.iterrows():
-            bill_number = row['Bill Number']
-            
-            # Make API request
-            response = requests.get(
-                'https://api.legiscan.com/',
-                params={
-                    'key': api_key,
-                    'op': 'getBill',
-                    'id': bill_number  # This might need to be adjusted if bill_number is not the ID
-                }
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data['status'] == 'OK':
-                    yield data['bill']
-            
-    return get_bills
+    
+    if response.status_code == 200:
+        data = response.json()
+        if data['status'] == 'OK':
+            return data['bill']
+    return None
 
 def main():
-    # Create source with credentials
-    source = legiscan_source(
-        api_key="915b8d36efc1524035bf6336561b07e6"  # In production, use environment variables
-    )
+    # Read input bills
+    input_bills = pd.read_csv('pipeline/bills.csv')
     
-    # Run pipeline
-    load_info = pipeline.run(
-        source.get_bills(bills_csv='pipeline/bills.csv')
-    )
+    # List to store bill details
+    bill_details = []
     
-    print(f"Load info: {load_info}")
+    # API key
+    api_key = ""
+    
+    # Process each bill
+    for _, row in input_bills.iterrows():
+        bill_number = row['Bill Number']
+        print(f"Processing bill {bill_number}")
+        
+        bill_data = fetch_bill_details(bill_number, api_key)
+        if bill_data:
+            bill_details.append(bill_data)
+    
+    # Convert to DataFrame and save to CSV
+    if bill_details:
+        df = pd.DataFrame(bill_details)
+        df.to_csv('pipeline/bills_details.csv', index=False)
+        print(f"Saved {len(bill_details)} bill details to bills_details.csv")
+    else:
+        print("No bill details were found")
 
 if __name__ == "__main__":
     main()
