@@ -6,13 +6,12 @@ queries:
 
 https://texasimpact.org
 
-<DataTable data={bills} search=true >
+<DataTable data={bills} search=true groupBy=Topic sort="last_action_date desc">
   <!-- TODO We could link to Texas Gov page  -->
-	<Column id=url contentType=link linkLabel=number title="Bill Number" />
-  <Column id=status_date />
+	<Column id=url contentType=link linkLabel=number title="Bill Number" opposite=Position openInNewTab=true/>
   <Column id=last_action_date />
   <Column id=last_action />
   <!-- TODO Fix status to oppose support -->
-  <Column id=status />
-  <Column id=title />
+  <Column id=Position />
+  <Column id=texas_impact_description	title="Description" />
 </DataTable>
