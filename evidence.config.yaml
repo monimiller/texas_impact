@@ -7,36 +7,38 @@ theme:
   # UI Colors
   colors:
     primary:
-      light: "#8789fe"
-      dark: "#a5b4fc"
+      light: "#003366"  # Texas Impact deep blue
+      dark: "#004080"   # Slightly lighter blue for dark mode
     accent:
-      light: "#6366f1"
-      dark: "#818cf8"
+      light: "#0066cc"  # Lighter blue for accents
+      dark: "#3399ff"   # Brighter blue for dark mode accents
     background:
       light: "white"
-      dark: "#1f2937"
+      dark: "#1a1a1a"   # Dark gray for dark mode
     content:
-      light: "#1f2937"
-      dark: "#f9fafb"
+      light: "#333333"  # Dark gray for content
+      dark: "#f9fafb"   # Light gray for dark mode content
   # Color palettes for charts with different data series
   colorPalettes:
     default:
       light:
-        - "#8789fe"  # Main purple color from your charts
-        - "#6366f1"
-        - "#4f46e5"
-        - "#4338ca"
+        - "#003366"     # Deep blue
+        - "#0066cc"     # Medium blue
+        - "#3399ff"     # Light blue
+        - "#66b3ff"     # Lighter blue
+        - "#b3d9ff"     # Palest blue
       dark:
-        - "#a5b4fc"  # Lighter versions for dark mode
-        - "#818cf8"
-        - "#6366f1"
-        - "#4f46e5"
+        - "#004080"     # Deep blue
+        - "#0066cc"     # Medium blue
+        - "#3399ff"     # Light blue
+        - "#66b3ff"     # Lighter blue
+        - "#b3d9ff"     # Palest blue
 
   # Color scales for continuous data (like your DataTable and US Map)
   colorScales:
     default:
         - "white"
-        - "#8789fe"  # Using your main purple color for consistency
+        - "#003366"  # Using Texas Impact deep blue for consistency
 
 
 plugins:

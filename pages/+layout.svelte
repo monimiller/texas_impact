@@ -7,9 +7,11 @@
 
 <EvidenceDefaultLayout
 	{data}
-	githubRepo="https://github.com/edmundmiller/periodic_legislation"
+	githubRepo="https://github.com/monimiller/texas_impact"
 	builtWithEvidence="true"
-	title="Periodic Bill Tracker"
+	title="Texas Impact Bill Tracker"
+	description="Track and analyze legislation that matters to Texas Impact's mission"
 >
+	<!-- TODO logo="/texas-impact-logo.png" -->
 	<slot slot="content" />
 </EvidenceDefaultLayout>
