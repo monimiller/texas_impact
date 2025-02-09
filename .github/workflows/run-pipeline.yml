@@ -10,22 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
       contents: write
 
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-        # Run data pipeline
-      - name: Install jq
+          
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install Meltano
         run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-      - uses: opt-nc/setup-duckdb-action@v1.0.8
-      - name: Run pipeline script
+          python -m pip install --upgrade pip
+          pip install meltano
+          
+      - name: Run Meltano pipeline
+        run: meltano run tap-rest-api-msdk target-csv
         env:
-          APIKEY: ${{ secrets.LEGISCAN_APIKEY }}
-        run: ./pipeline.bash
+          LEGISCAN_API_KEY: ${{ secrets.LEGISCAN_API_KEY }}
+        
       - uses: stefanzweifel/git-auto-commit-action@v5
