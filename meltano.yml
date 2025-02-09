@@ -28,4 +28,4 @@ plugins:
     variant: meltanolabs
     pip_url: git+https://github.com/MeltanoLabs/target-csv.git
     config:
-      output_path: sources/legiscan/bills.csv
+      output_path: sources/legiscan
