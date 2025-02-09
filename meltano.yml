@@ -11,18 +11,21 @@ plugins:
     variant: widen
     pip_url: tap-rest-api-msdk
     config:
-      base_url: https://api.legiscan.com
-      path: /
-      params:
-        key: ${LEGISCAN_API_KEY}
-        op: getMonitorList
-        record: all
+      api_url: https://api.legiscan.com
+      auth_method: no_auth
       streams:
         - name: monitored_bills
+          path: /
+          records_path: $.monitorlist[*]
           primary_keys: 
             - bill_id
-          json_path: $.payload[*]
-          path: /
           params:
+            key: ${LEGISCAN_API_KEY}
             op: getMonitorList
             record: all
+  loaders:
+  - name: target-jsonl
+    variant: andyh1203
+    pip_url: target-jsonl
+    config:
+      destination_path: output
