@@ -14,18 +14,18 @@ plugins:
       api_url: https://api.legiscan.com
       auth_method: no_auth
       streams:
-        - name: monitored_bills
-          path: /
-          records_path: $.monitorlist[*]
-          primary_keys: 
-            - bill_id
-          params:
-            key: ${LEGISCAN_API_KEY}
-            op: getMonitorList
-            record: all
+      - name: monitored_bills
+        path: /
+        records_path: $.monitorlist[*]
+        primary_keys:
+        - bill_id
+        params:
+          key: ${LEGISCAN_API_KEY}
+          op: getMonitorList
+          record: all
   loaders:
-  - name: target-jsonl
-    variant: andyh1203
-    pip_url: target-jsonl
+  - name: target-csv
+    variant: meltanolabs
+    pip_url: git+https://github.com/MeltanoLabs/target-csv.git
     config:
-      destination_path: output
+      output_path: sources/legiscan/bills.csv
