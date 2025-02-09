@@ -5,3 +5,24 @@ environments:
 - name: dev
 - name: staging
 - name: prod
+plugins:
+  extractors:
+  - name: tap-rest-api-msdk
+    variant: widen
+    pip_url: tap-rest-api-msdk
+    config:
+      base_url: https://api.legiscan.com
+      path: /
+      params:
+        key: ${LEGISCAN_API_KEY}
+        op: getMonitorList
+        record: all
+      streams:
+        - name: monitored_bills
+          primary_keys: 
+            - bill_id
+          json_path: $.payload[*]
+          path: /
+          params:
+            op: getMonitorList
+            record: all
