@@ -23,9 +23,21 @@ plugins:
           key: ${LEGISCAN_API_KEY}
           op: getMonitorList
           record: all
+      - name: bill_details
+        path: /
+        records_path: $.bill
+        primary_keys:
+        - bill_id
+        params:
+          key: ${LEGISCAN_API_KEY}
+          op: getBill
+          id: 1891167
   loaders:
   - name: target-csv
     variant: meltanolabs
-    pip_url: git+https://github.com/MeltanoLabs/target-csv.git
     config:
-      output_path: sources/legiscan
+      destination_path: ${MELTANO_PROJECT_ROOT}/sources/legiscan
+  - name: target-jsonl
+    variant: andyh1203
+    config:
+      destination_path: ${MELTANO_PROJECT_ROOT}/sources/legiscan
