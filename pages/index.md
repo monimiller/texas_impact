@@ -1,10 +1,10 @@
 ---
-title: Texas Impact Bill Tracker
+title: Texas Impact Reproductive Issues Bill Tracker
 queries:
   - bills.sql
 ---
 
-https://texasimpact.org
+[Join the Reproductive Issues Champions!](https://secure.everyaction.com/ijP2C35RDk-5hJVeXth1Fw2)
 
 <DataTable data={bills} search=true groupBy=Topic sort="last_action_date desc">
   <!-- TODO We could link to Texas Gov page  -->
