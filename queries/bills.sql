@@ -1,6 +1,5 @@
 select
     number,
-    state,
     url,
     status_date,
     status,
