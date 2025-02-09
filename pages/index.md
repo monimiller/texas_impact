@@ -1,7 +1,9 @@
 ---
 title: Texas Impact Bill Tracker
 queries:
-  - bills_monthly.sql
+  - bills.sql
 ---
 
 https://texasimpact.org
+
+<DataTable data={bills}/>
