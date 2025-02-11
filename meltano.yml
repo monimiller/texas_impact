@@ -2,42 +2,80 @@ version: 1
 default_environment: dev
 project_id: 0e8068ab-9592-40a3-8c74-2b04e564b014
 environments:
-- name: dev
-- name: staging
-- name: prod
+  - name: dev
+  - name: staging
+  - name: prod
 plugins:
   extractors:
-  - name: tap-rest-api-msdk
-    variant: widen
-    pip_url: tap-rest-api-msdk
-    config:
-      api_url: https://api.legiscan.com
-      auth_method: no_auth
-      streams:
-      - name: monitored_bills
-        path: /
-        records_path: $.monitorlist[*]
-        primary_keys:
-        - bill_id
-        params:
-          key: ${LEGISCAN_API_KEY}
-          op: getMonitorList
-          record: all
-      - name: bill_details
-        path: /
-        records_path: $.bill
-        primary_keys:
-        - bill_id
-        params:
-          key: ${LEGISCAN_API_KEY}
-          op: getBill
-          id: 1891167
+    - name: tap-rest-api-msdk
+      variant: widen
+      pip_url: tap-rest-api-msdk
+      select:
+        - bill_list.*
+        - bill_details.*
+      config:
+        api_url: https://api.legiscan.com
+        auth_method: no_auth
+        streams:
+          - name: bill_list
+            path: /
+            records_path: $.masterlist[*]
+            primary_keys:
+              - bill_id
+            params:
+              key: ${LEGISCAN_API_KEY}
+              op: getMasterList
+              state: TX
+            stream_maps:
+              - type: map
+                map: >
+                  {
+                    "bill_id": "{{ bill_id }}",
+                    "bill_number": "{{ bill_number }}"
+                  }
+              - type: dedupe
+                unique_key: bill_id
+          - name: bill_details
+            path: /
+            records_path: $.bill
+            primary_keys:
+              - bill_id
+            params:
+              key: ${LEGISCAN_API_KEY}
+              op: getBill
+              id: "{{ stream_maps.bill_id }}"
+            stream_maps:
+              - type: map
+                map: >
+                  {
+                    "bill_id": bill_list.bill_id,
+                    "bill_number": bill_list.bill_number
+                  }
+              - type: dedupe
+                unique_key: bill_id
+            batch_config:
+              request_concurrency: 1
+              error_handlers:
+                - type: retry
+              max_attempts: 3
+              backoff: 1.5
+    - name: tap-csv
+      variant: meltanolabs
+      pip_url: git+https://github.com/MeltanoLabs/tap-csv.git
+      config:
+        files:
+          - entity: bills
+            path: sources/texas_impact/bills.csv
+            keys: 
+              - bill_number
+            encoding: utf-8
   loaders:
-  - name: target-csv
-    variant: meltanolabs
-    config:
-      destination_path: ${MELTANO_PROJECT_ROOT}/sources/legiscan
-  - name: target-jsonl
-    variant: andyh1203
-    config:
-      destination_path: ${MELTANO_PROJECT_ROOT}/sources/legiscan
+    - name: target-jsonl
+      variant: andyh1203
+      config:
+        destination_path: ${MELTANO_PROJECT_ROOT}/sources/legiscan
+jobs:
+  - name: sync-legiscan
+    tasks:
+      - tap-csv target-jsonl
+      - tap-rest-api-msdk target-jsonl
