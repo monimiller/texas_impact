@@ -11,27 +11,27 @@ plugins:
       variant: widen
       pip_url: tap-rest-api-msdk
       select:
-        - bill_list.*
+        - bill_search.*
         - bill_details.*
       config:
         api_url: https://api.legiscan.com
         auth_method: no_auth
         streams:
-          - name: bill_list
+          - name: bill_search
             path: /
-            records_path: $.masterlist[*]
+            records_path: $.monitorlist[*]
             primary_keys:
               - bill_id
             params:
               key: ${LEGISCAN_API_KEY}
-              op: getMasterList
+              op: getMonitorList
               state: TX
             stream_maps:
               - type: map
                 map: >
                   {
                     "bill_id": "{{ bill_id }}",
-                    "bill_number": "{{ bill_number }}"
+                    "number": "{{ bill_number }}"
                   }
               - type: dedupe
                 unique_key: bill_id
@@ -48,8 +48,8 @@ plugins:
               - type: map
                 map: >
                   {
-                    "bill_id": bill_list.bill_id,
-                    "bill_number": bill_list.bill_number
+                    "bill_id": "{{ bill_search.bill_id }}",
+                    "number": "{{ bill_search.number }}"
                   }
               - type: dedupe
                 unique_key: bill_id
@@ -57,8 +57,8 @@ plugins:
               request_concurrency: 1
               error_handlers:
                 - type: retry
-              max_attempts: 3
-              backoff: 1.5
+                  max_attempts: 3
+                  backoff: 1.5
     - name: tap-csv
       variant: meltanolabs
       pip_url: git+https://github.com/MeltanoLabs/tap-csv.git
@@ -66,7 +66,7 @@ plugins:
         files:
           - entity: bills
             path: sources/texas_impact/bills.csv
-            keys: 
+            keys:
               - bill_number
             encoding: utf-8
   loaders:
