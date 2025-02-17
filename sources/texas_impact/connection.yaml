@@ -2,4 +2,3 @@
 name: texas_impact
 type: csv
 options: {}
-  # options: types={'Percent Complete':'VARCHAR'}

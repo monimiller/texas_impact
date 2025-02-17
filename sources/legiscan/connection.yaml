@@ -1,6 +1,4 @@
-# This file was automatically generated
 name: legiscan
 type: duckdb
 options:
-  path: legiscan.duckdb
-  # options: types={'Percent Complete':'VARCHAR'}
+  filename: bills.duckdb
