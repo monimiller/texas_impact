@@ -106,11 +106,30 @@ if __name__ == "__main__":
         pipeline_name="legiscan",
         destination=dlt.destinations.duckdb(str(LEGISCAN_DIR / "bills.duckdb")),
         dataset_name="legiscan_bills",
-        dev_mode=True  # Replacing full_refresh with dev_mode as per deprecation warning
     )
 
     # Load the data
     load_info = pipeline.run(legiscan_source())
+
+    # Create a view for the latest data
+    with pipeline.sql_client() as client:
+        # Create the schema if it doesn't exist
+        client.execute("CREATE SCHEMA IF NOT EXISTS legiscan_bills")
+
+        # Get the latest schema name
+        latest_schema = client.execute("""
+            SELECT schema_name 
+            FROM information_schema.schemata 
+            WHERE schema_name LIKE 'legiscan_bills_%' 
+            ORDER BY schema_name DESC 
+            LIMIT 1
+        """).fetchone()[0]
+
+        # Create or replace view
+        client.execute(f"""
+            CREATE OR REPLACE VIEW legiscan_bills.latest_bills AS 
+            SELECT * FROM {latest_schema}.bills
+        """)
 
     # Print outcome
     print(load_info)
