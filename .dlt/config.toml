@@ -1,2 +1,6 @@
 [runtime]
 dlthub_telemetry = true
+loader_file_format = "csv"
+
+[normalize.data_writer]
+disable_compression=true

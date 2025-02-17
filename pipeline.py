@@ -24,15 +24,10 @@ LEGISCAN_DIR = PROJECT_ROOT / "sources" / "legiscan"
 def get_monitor_list(api_key: str) -> List[Dict]:
     """Fetch the monitor list from LegiscanAPI"""
     url = "https://api.legiscan.com/"
-    # Remove any whitespace from API key
     params = {"key": api_key.strip(), "op": "getMonitorList", "state": "TX"}
 
     response = requests.get(url, params=params)
     response.raise_for_status()
-    
-    # Debug the response
-    print(f"Response status: {response.status_code}")
-    print(f"Response text: {response.text[:200]}")  # Print first 200 chars
     
     try:
         data = response.json()
@@ -40,10 +35,19 @@ def get_monitor_list(api_key: str) -> List[Dict]:
         print(f"Failed to decode JSON. Response content: {response.text}")
         raise
 
-    # Extract and transform bills from monitorlist
+    # Extract and transform bills from monitorlist, including all relevant fields
     bills = []
     for bill in data.get("monitorlist", []):
-        bills.append({"bill_id": bill["bill_id"], "number": bill["number"]})
+        bills.append({
+            "bill_id": bill["bill_id"],
+            "number": bill["number"],
+            "state": bill["state"],
+            "status": bill["status"],
+            "title": bill["title"],
+            "description": bill["description"],
+            "last_action": bill["last_action"],
+            "last_action_date": bill["last_action_date"]
+        })
 
     return bills
 
@@ -61,7 +65,12 @@ def get_bill_details(api_key: str, bill_id: str) -> Dict:
     return {
         "bill_id": bill_data.get("bill_id"),
         "number": bill_data.get("bill_number"),
-        # Add any other fields you want to extract
+        "state": bill_data.get("state"),
+        "status": bill_data.get("status"),
+        "title": bill_data.get("title"),
+        "description": bill_data.get("description"),
+        "last_action": bill_data.get("last_action"),
+        "last_action_date": bill_data.get("last_action_date")
     }
 
 
@@ -98,8 +107,8 @@ if __name__ == "__main__":
         dev_mode=True
     )
 
-    # Load the data
-    load_info = pipeline.run(legiscan_source())
+    # Load the data with CSV format
+    load_info = pipeline.run(legiscan_source(), loader_file_format="csv")
 
     # Print outcome
     print(load_info)
