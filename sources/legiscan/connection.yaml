@@ -1,5 +1,6 @@
 # This file was automatically generated
 name: legiscan
-type: csv
-options: {}
+type: duckdb
+options:
+  path: legiscan.duckdb
   # options: types={'Percent Complete':'VARCHAR'}

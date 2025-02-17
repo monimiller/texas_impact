@@ -1,6 +1,6 @@
 # /// script
 # dependencies = [
-#     "dlt",
+#     "dlt[duckdb]",
 #     "requests",
 #     "python-dotenv",
 # ]
