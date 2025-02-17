@@ -9,5 +9,5 @@ SELECT
     l.last_action_date,
     l.last_action,
     l.title
-from legiscan.monitored_bills l
+from legiscan.latest_bills l
 LEFT JOIN texas_impact.bills t ON l.number = t.bill_number;
