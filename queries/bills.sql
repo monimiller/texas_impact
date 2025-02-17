@@ -1,5 +1,4 @@
-SELECT 
-
+SELECT
     l.number,
     t.topic,
     t.position,
