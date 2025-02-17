@@ -28,7 +28,7 @@ def get_monitor_list(api_key: str) -> List[Dict]:
 
     response = requests.get(url, params=params)
     response.raise_for_status()
-    
+
     try:
         data = response.json()
     except requests.exceptions.JSONDecodeError as e:
@@ -38,16 +38,18 @@ def get_monitor_list(api_key: str) -> List[Dict]:
     # Extract and transform bills from monitorlist, including all relevant fields
     bills = []
     for bill in data.get("monitorlist", []):
-        bills.append({
-            "bill_id": bill["bill_id"],
-            "number": bill["number"],
-            "state": bill["state"],
-            "status": bill["status"],
-            "title": bill["title"],
-            "description": bill["description"],
-            "last_action": bill["last_action"],
-            "last_action_date": bill["last_action_date"]
-        })
+        bills.append(
+            {
+                "bill_id": bill["bill_id"],
+                "number": bill["number"],
+                "state": bill["state"],
+                "status": bill["status"],
+                "title": bill["title"],
+                "description": bill["description"],
+                "last_action": bill["last_action"],
+                "last_action_date": bill["last_action_date"],
+            }
+        )
 
     return bills
 
@@ -70,7 +72,7 @@ def get_bill_details(api_key: str, bill_id: str) -> Dict:
         "title": bill_data.get("title"),
         "description": bill_data.get("description"),
         "last_action": bill_data.get("last_action"),
-        "last_action_date": bill_data.get("last_action_date")
+        "last_action_date": bill_data.get("last_action_date"),
     }
 
 
@@ -98,17 +100,17 @@ def legiscan_source(api_key: str = os.getenv("LEGISCAN_API_KEY")):
 if __name__ == "__main__":
     # Create output directory if it doesn't exist
     LEGISCAN_DIR.mkdir(parents=True, exist_ok=True)
-    
-    # Initialize the pipeline with filesystem destination
+
+    # Initialize the pipeline with DuckDB destination
     pipeline = dlt.pipeline(
         pipeline_name="legiscan",
-        destination="filesystem",
+        destination=dlt.destinations.duckdb(str(LEGISCAN_DIR / "bills.duckdb")),
         dataset_name="legiscan_bills",
-        dev_mode=True
+        dev_mode=True  # Replacing full_refresh with dev_mode as per deprecation warning
     )
 
-    # Load the data with CSV format
-    load_info = pipeline.run(legiscan_source(), loader_file_format="csv")
+    # Load the data
+    load_info = pipeline.run(legiscan_source())
 
     # Print outcome
     print(load_info)
