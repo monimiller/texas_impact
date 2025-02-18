@@ -168,7 +168,7 @@ if __name__ == "__main__":
         pipeline_name="legiscan",
         destination="filesystem",
         dataset_name="legiscan_bills",
-        dev_mode=True
+        dev_mode=False
     )
 
     # Load the data with CSV format
