@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run
 # /// script
 # dependencies = [
-#     "dlt",
+#     "dlt[duckdb]",
 #     "requests",
 #     "python-dotenv",
 # ]
@@ -163,16 +163,16 @@ if __name__ == "__main__":
     # Create output directory if it doesn't exist
     LEGISCAN_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Initialize the pipeline with filesystem destination
+    # Initialize the pipeline with duckdb destination
     pipeline = dlt.pipeline(
         pipeline_name="legiscan",
-        destination="filesystem",
+        destination=dlt.destinations.duckdb(str(LEGISCAN_DIR / "pipeline.duckdb")),
         dataset_name="legiscan_bills",
         dev_mode=False
     )
 
-    # Load the data with CSV format
-    load_info = pipeline.run(legiscan_source(), loader_file_format="csv")
+    # Load the data
+    load_info = pipeline.run(legiscan_source())
 
     # Print outcome
     print(load_info)
