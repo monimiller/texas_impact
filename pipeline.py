@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run
 # /// script
 # dependencies = [
-#     "dlt[duckdb]",
+#     "dlt",
 #     "requests",
 #     "python-dotenv",
 # ]
@@ -39,18 +39,16 @@ def get_monitor_list(api_key: str) -> List[Dict]:
     # Extract and transform bills from monitorlist, including all relevant fields
     bills = []
     for bill in data.get("monitorlist", []):
-        bills.append(
-            {
-                "bill_id": bill["bill_id"],
-                "number": bill["number"],
-                "state": bill["state"],
-                "status": bill["status"],
-                "title": bill["title"],
-                "description": bill["description"],
-                "last_action": bill["last_action"],
-                "last_action_date": bill["last_action_date"],
-            }
-        )
+        bills.append({
+            "bill_id": bill["bill_id"],
+            "number": bill["number"],
+            "state": bill["state"],
+            "status": bill["status"],
+            "title": bill["title"],
+            "description": bill["description"],
+            "last_action": bill["last_action"],
+            "last_action_date": bill["last_action_date"]
+        })
 
     return bills
 
@@ -73,7 +71,7 @@ def get_bill_details(api_key: str, bill_id: str) -> Dict:
         "title": bill_data.get("title"),
         "description": bill_data.get("description"),
         "last_action": bill_data.get("last_action"),
-        "last_action_date": bill_data.get("last_action_date"),
+        "last_action_date": bill_data.get("last_action_date")
     }
 
 
@@ -102,35 +100,16 @@ if __name__ == "__main__":
     # Create output directory if it doesn't exist
     LEGISCAN_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Initialize the pipeline with DuckDB destination
+    # Initialize the pipeline with filesystem destination
     pipeline = dlt.pipeline(
         pipeline_name="legiscan",
-        destination=dlt.destinations.duckdb(str(LEGISCAN_DIR / "bills.duckdb")),
+        destination="filesystem",
         dataset_name="legiscan_bills",
+        dev_mode=True
     )
 
-    # Load the data
-    load_info = pipeline.run(legiscan_source())
-
-    # Create a view for the latest data
-    with pipeline.sql_client() as client:
-        # Create the schema if it doesn't exist
-        client.execute("CREATE SCHEMA IF NOT EXISTS legiscan_bills")
-
-        # Get the latest schema name
-        latest_schema = client.execute("""
-            SELECT schema_name 
-            FROM information_schema.schemata 
-            WHERE schema_name LIKE 'legiscan_bills_%' 
-            ORDER BY schema_name DESC 
-            LIMIT 1
-        """).fetchone()[0]
-
-        # Create or replace view
-        client.execute(f"""
-            CREATE OR REPLACE VIEW legiscan_bills.latest_bills AS 
-            SELECT * FROM {latest_schema}.bills
-        """)
+    # Load the data with CSV format
+    load_info = pipeline.run(legiscan_source(), loader_file_format="csv")
 
     # Print outcome
     print(load_info)
