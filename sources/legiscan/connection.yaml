@@ -1,8 +1,5 @@
-# This file was automatically generated
 type: duckdb
 name: legiscan
 options:
   filename: pipeline.duckdb
-# Advanced Options, you probably don't want to change this
-buildOptions:
-  batchSize: 1000000
+  read_only: true
