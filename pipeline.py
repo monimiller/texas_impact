@@ -54,45 +54,108 @@ def get_monitor_list(api_key: str) -> List[Dict]:
 
 
 def get_bill_details(api_key: str, bill_id: str) -> Dict:
-    """Fetch details for a specific bill"""
+    """
+    Fetch details for a specific bill
+    
+    Args:
+        api_key: LegiscanAPI key
+        bill_id: ID of the bill to fetch
+        
+    Returns:
+        Dictionary containing bill details with nested data
+    """
     url = "https://api.legiscan.com/"
-    params = {"key": api_key.strip(), "op": "getBill", "id": bill_id}
+    params = {"key": api_key.strip(), "op": "getBill", "id": str(bill_id)}
 
     response = requests.get(url, params=params)
     response.raise_for_status()
     data = response.json()
 
     bill_data = data.get("bill", {})
-    return {
-        "bill_id": bill_data.get("bill_id"),
-        "number": bill_data.get("bill_number"),
-        "state": bill_data.get("state"),
-        "status": bill_data.get("status"),
-        "title": bill_data.get("title"),
-        "description": bill_data.get("description"),
-        "last_action": bill_data.get("last_action"),
-        "last_action_date": bill_data.get("last_action_date")
-    }
+    
+    # Return the complete bill data
+    return bill_data
 
 
-@dlt.source
+@dlt.source(root_key=True)
 def legiscan_source(api_key: str = os.getenv("LEGISCAN_API_KEY")):
-    """DLT source for Legiscan data"""
+    """DLT source for Legiscan data with nested tables"""
     if not api_key:
         raise ValueError("LEGISCAN_API_KEY environment variable is not set")
 
-    @dlt.resource
+    @dlt.resource(primary_key="bill_id")
     def bills():
-        # First get the monitor list
+        """Root resource for bills"""
         monitor_list = get_monitor_list(api_key)
-
-        # Then get details for each bill
         for bill in monitor_list:
             bill_details = get_bill_details(api_key, bill["bill_id"])
             yield bill_details
 
-    # Return the resource
-    return bills
+    @dlt.resource(name="bill_history")
+    def history():
+        """History events for bills"""
+        monitor_list = get_monitor_list(api_key)
+        for bill in monitor_list:
+            bill_details = get_bill_details(api_key, bill["bill_id"])
+            history = bill_details.get("history", [])
+            for event in history:
+                event["bill_id"] = bill_details["bill_id"]
+                event["date"] = event.get("date")
+                event["action"] = event.get("action")
+                event["chamber"] = event.get("chamber")
+                event["chamber_id"] = event.get("chamber_id")
+                event["importance"] = event.get("importance")
+                yield event
+
+    @dlt.resource(name="bill_sponsors")
+    def sponsors():
+        """Sponsors for bills"""
+        monitor_list = get_monitor_list(api_key)
+        for bill in monitor_list:
+            bill_details = get_bill_details(api_key, bill["bill_id"])
+            sponsors = bill_details.get("sponsors", [])
+            for sponsor in sponsors:
+                sponsor["bill_id"] = bill_details["bill_id"]
+                sponsor["people_id"] = sponsor.get("people_id")
+                sponsor["person_hash"] = sponsor.get("person_hash")
+                sponsor["party_id"] = sponsor.get("party_id")
+                sponsor["party"] = sponsor.get("party")
+                sponsor["role_id"] = sponsor.get("role_id")
+                sponsor["role"] = sponsor.get("role")
+                sponsor["name"] = sponsor.get("name")
+                sponsor["first_name"] = sponsor.get("first_name")
+                sponsor["middle_name"] = sponsor.get("middle_name")
+                sponsor["last_name"] = sponsor.get("last_name")
+                sponsor["suffix"] = sponsor.get("suffix")
+                sponsor["nickname"] = sponsor.get("nickname")
+                sponsor["district"] = sponsor.get("district")
+                sponsor["ftm_eid"] = sponsor.get("ftm_eid")
+                sponsor["votesmart_id"] = sponsor.get("votesmart_id")
+                sponsor["opensecrets_id"] = sponsor.get("opensecrets_id")
+                sponsor["knowwho_pid"] = sponsor.get("knowwho_pid")
+                sponsor["ballotpedia"] = sponsor.get("ballotpedia")
+                sponsor["sponsor_type_id"] = sponsor.get("sponsor_type_id")
+                sponsor["sponsor_order"] = sponsor.get("sponsor_order")
+                sponsor["committee_sponsor"] = sponsor.get("committee_sponsor")
+                sponsor["committee_id"] = sponsor.get("committee_id")
+                sponsor["state_federal"] = sponsor.get("state_federal")
+                yield sponsor
+
+    @dlt.resource(name="bill_subjects")
+    def subjects():
+        """Subjects for bills"""
+        monitor_list = get_monitor_list(api_key)
+        for bill in monitor_list:
+            bill_details = get_bill_details(api_key, bill["bill_id"])
+            subjects = bill_details.get("subjects", [])
+            for subject in subjects:
+                subject["bill_id"] = bill_details["bill_id"]
+                subject["subject_id"] = subject.get("subject_id")
+                subject["subject_name"] = subject.get("subject_name")
+                yield subject
+
+    # Return all resources
+    return [bills, history, sponsors, subjects]
 
 
 # Pipeline execution
