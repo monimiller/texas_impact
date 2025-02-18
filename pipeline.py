@@ -83,7 +83,10 @@ def legiscan_source(api_key: str = os.getenv("LEGISCAN_API_KEY")):
     if not api_key:
         raise ValueError("LEGISCAN_API_KEY environment variable is not set")
 
-    @dlt.resource(primary_key="bill_id")
+    @dlt.resource(
+        primary_key="bill_id",
+        write_disposition="merge"
+    )
     def bills():
         """Root resource for bills"""
         monitor_list = get_monitor_list(api_key)
@@ -91,7 +94,11 @@ def legiscan_source(api_key: str = os.getenv("LEGISCAN_API_KEY")):
             bill_details = get_bill_details(api_key, bill["bill_id"])
             yield bill_details
 
-    @dlt.resource(name="bill_history")
+    @dlt.resource(
+        name="bill_history",
+        primary_key=["bill_id", "date", "action"],
+        write_disposition="merge"
+    )
     def history():
         """History events for bills"""
         monitor_list = get_monitor_list(api_key)
@@ -107,7 +114,11 @@ def legiscan_source(api_key: str = os.getenv("LEGISCAN_API_KEY")):
                 event["importance"] = event.get("importance")
                 yield event
 
-    @dlt.resource(name="bill_sponsors")
+    @dlt.resource(
+        name="bill_sponsors",
+        primary_key=["bill_id", "people_id"],
+        write_disposition="merge"
+    )
     def sponsors():
         """Sponsors for bills"""
         monitor_list = get_monitor_list(api_key)
@@ -141,7 +152,11 @@ def legiscan_source(api_key: str = os.getenv("LEGISCAN_API_KEY")):
                 sponsor["state_federal"] = sponsor.get("state_federal")
                 yield sponsor
 
-    @dlt.resource(name="bill_subjects")
+    @dlt.resource(
+        name="bill_subjects",
+        primary_key=["bill_id", "subject_id"],
+        write_disposition="merge"
+    )
     def subjects():
         """Subjects for bills"""
         monitor_list = get_monitor_list(api_key)
