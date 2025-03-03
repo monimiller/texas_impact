@@ -18,5 +18,5 @@ queries:
   <Column id=last_action_date title="Last Updated" />
   <Column id=last_action title="Action" />
   <Column id=bill_text_link contentType=link linkLabel="View Text" title="Bill Text" openInNewTab=true />
-  <Column id=texas_impact_description	title="Description" />
+  <Column id=texas_impact_description	title="Description" class="description-column" />
 </DataTable>
