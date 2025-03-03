@@ -22,7 +22,6 @@ WITH bill_details AS (
       ELSE 0
     END AS progress_percentage,
     -- Create status_field in the format shown in example
-    'Status: ' || 
     CASE 
       WHEN b.status = 1 THEN 'Introduced'
       WHEN b.status = 2 THEN 'In Committee'
@@ -31,15 +30,7 @@ WITH bill_details AS (
       WHEN b.status = 5 THEN 'Enacted'
       ELSE 'Unknown'
     END || 
-    ' on ' || b.status_date || ' - ' || 
-    CASE 
-      WHEN b.status = 1 THEN 25  -- Introduced
-      WHEN b.status = 2 THEN 50  -- In committee
-      WHEN b.status = 3 THEN 75  -- Passed committee
-      WHEN b.status = 4 THEN 90  -- Passed chamber
-      WHEN b.status = 5 THEN 100 -- Enacted
-      ELSE 0
-    END || '% progression' as status_field,
+    ' on ' || b.status_date as status_field,
     'https://legiscan.com/TX/bill/' || b.bill_number || '/2025' as url,
     t.state_link as bill_text_link
   FROM legiscan.bills b
