@@ -1,0 +1,1 @@
+SELECT COUNT(*) as value FROM ${all_bills} WHERE chamber = 'Senate' 

@@ -1,40 +1,45 @@
 ---
 title: Texas Impact Legislative Dashboard
 queries:
-  - all_bills.sql
-  - progress_counts.sql
-  - topic_counts.sql
+  - all_bills: all_bills.sql
+  - progress_counts: progress_counts.sql
+  - topic_counts: topic_counts.sql
+  - total_count: total_count.sql
+  - house_count: house_count.sql
+  - senate_count: senate_count.sql
+  - support_count: support_count.sql
+  - oppose_count: oppose_count.sql
 ---
 
 <BigValue 
-  data={all_bills} 
-  value={all_bills.length} 
+  data={total_count} 
+  value="value" 
   title="Total Bills Tracked" 
   subtitle="across all chambers"
 />
 
 <Grid columnsWide={2}>
   <BigValue 
-    data={all_bills.where(`chamber = 'House'`)} 
-    value={all_bills.where(`chamber = 'House'`).length} 
+    data={house_count} 
+    value="value" 
     title="House Bills" 
   />
   <BigValue 
-    data={all_bills.where(`chamber = 'Senate'`)} 
-    value={all_bills.where(`chamber = 'Senate'`).length} 
+    data={senate_count} 
+    value="value" 
     title="Senate Bills" 
   />
 </Grid>
 
 <Grid columnsWide={2}>
   <BigValue 
-    data={all_bills.where(`position = 'Support'`)} 
-    value={all_bills.where(`position = 'Support'`).length} 
+    data={support_count} 
+    value="value"
     title="Bills We Support" 
   />
   <BigValue 
-    data={all_bills.where(`position = 'Oppose'`)} 
-    value={all_bills.where(`position = 'Oppose'`).length} 
+    data={oppose_count} 
+    value="value"
     title="Bills We Oppose" 
   />
 </Grid>
