@@ -10,6 +10,7 @@ queries:
   - senate_count: senate_count.sql
   - support_count: support_count.sql
   - oppose_count: oppose_count.sql
+  - position_chamber_topic_sankey: position_chamber_topic_sankey.sql
 ---
 
 <BigValue 
@@ -58,13 +59,16 @@ queries:
   chartAreaHeight={350}
 />
 
-## Bills by Topic
+## Bills Flow Analysis
 
-<BarChart
-  data={topic_counts}
-  x=Topic
-  y=count
-  title="Bills by Topic"
+<SankeyChart
+  data={position_chamber_topic_sankey}
+  sourceCol="source"
+  targetCol="target"
+  valueCol="value"
+  title="Bill Flow From Position to Chamber to Topic"
+  subtitle="Visualization of bill relationships across position, chamber, and topic"
+  chartAreaHeight={500}
 />
 
 ## Recent Activity
