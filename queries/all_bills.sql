@@ -1,64 +1,77 @@
-WITH base_bills AS (
-    SELECT
-        l.bill_number,
-        t.topic,
-        t.position,
-        t.description as texas_impact_description,
-        l.url,
-        l.status_date,
-        l.status,
-        -- Get the latest action date and description
-        (SELECT h.date FROM legiscan_bills.bill_history h WHERE h.bill_id = l.bill_id ORDER BY h.date DESC LIMIT 1) as last_action_date,
-        (SELECT h.action FROM legiscan_bills.bill_history h WHERE h.bill_id = l.bill_id ORDER BY h.date DESC LIMIT 1) as last_action,
-        -- Get the status label based on progress events
-        CASE
-            WHEN l.status = 1 THEN 'Introduced'
-            WHEN l.status = 2 THEN 'Engrossed'
-            WHEN l.status = 3 THEN 'Enrolled'
-            WHEN l.status = 4 THEN 'Passed'
-            WHEN l.status = 5 THEN 'Vetoed'
-            WHEN l.status = 6 THEN 'Failed'
-            ELSE 'Unknown'
-        END as status_label,
-        -- Calculate progress percentage based on status
-        CASE
-            WHEN l.status = 1 THEN 25
-            WHEN l.status = 2 THEN 50
-            WHEN l.status = 3 THEN 75
-            WHEN l.status = 4 THEN 100
-            WHEN l.status = 5 THEN 0
-            WHEN l.status = 6 THEN 0
-            ELSE 0
-        END as progress_percentage,
-        -- Create formatted status field like "Status: Introduced on November 12 2024 - 25% progression"
-        CASE
-            WHEN l.status = 1 THEN 'Status: Introduced on ' || l.status_date || ' - 25% progression'
-            WHEN l.status = 2 THEN 'Status: Engrossed on ' || l.status_date || ' - 50% progression'
-            WHEN l.status = 3 THEN 'Status: Enrolled on ' || l.status_date || ' - 75% progression'
-            WHEN l.status = 4 THEN 'Status: Passed on ' || l.status_date || ' - 100% progression'
-            WHEN l.status = 5 THEN 'Status: Vetoed on ' || l.status_date
-            WHEN l.status = 6 THEN 'Status: Failed on ' || l.status_date
-            ELSE 'Status: Unknown'
-        END as status_field,
-        -- Get bill text link - use bill_id for the join
-        (SELECT bt.state_link 
-         FROM legiscan_bills.bills__texts bt 
-         JOIN legiscan_bills.bills b ON b.bill_id = l.bill_id AND b._dlt_id = bt._dlt_parent_id 
-         ORDER BY bt.date DESC 
-         LIMIT 1) as bill_text_link,
-        -- Get bill text type (Introduced, Amended, etc.)
-        (SELECT bt.type 
-         FROM legiscan_bills.bills__texts bt 
-         JOIN legiscan_bills.bills b ON b.bill_id = l.bill_id AND b._dlt_id = bt._dlt_parent_id 
-         ORDER BY bt.date DESC 
-         LIMIT 1) as bill_text_type,
-        l.title,
-        CASE 
-            WHEN REGEXP_MATCHES(TRIM(UPPER(l.bill_number)), '^HB[0-9]') THEN 'House'
-            WHEN REGEXP_MATCHES(TRIM(UPPER(l.bill_number)), '^SB[0-9]') THEN 'Senate'
-            ELSE 'Other'
-        END as chamber
-    from legiscan.bills l
-    LEFT JOIN texas_impact.bills t ON l.bill_number = t.bill_number
+WITH bill_details AS (
+  SELECT 
+    b.bill_id,
+    b.bill_number,
+    b.title,
+    b.description,
+    CASE 
+      WHEN b.bill_number LIKE 'H%' THEN 'House'
+      WHEN b.bill_number LIKE 'S%' THEN 'Senate'
+      ELSE 'Other'
+    END as chamber,
+    b.status_date,
+    h.date AS last_action_date,
+    h.action AS last_action,
+    -- Calculate progress percentage based on status
+    CASE 
+      WHEN b.status = 1 THEN 25  -- Introduced
+      WHEN b.status = 2 THEN 50  -- In committee
+      WHEN b.status = 3 THEN 75  -- Passed committee
+      WHEN b.status = 4 THEN 90  -- Passed chamber
+      WHEN b.status = 5 THEN 100 -- Enacted
+      ELSE 0
+    END AS progress_percentage,
+    -- Create status_field in the format shown in example
+    'Status: ' || 
+    CASE 
+      WHEN b.status = 1 THEN 'Introduced'
+      WHEN b.status = 2 THEN 'In Committee'
+      WHEN b.status = 3 THEN 'Passed Committee'
+      WHEN b.status = 4 THEN 'Passed Chamber'
+      WHEN b.status = 5 THEN 'Enacted'
+      ELSE 'Unknown'
+    END || 
+    ' on ' || b.status_date || ' - ' || 
+    CASE 
+      WHEN b.status = 1 THEN 25  -- Introduced
+      WHEN b.status = 2 THEN 50  -- In committee
+      WHEN b.status = 3 THEN 75  -- Passed committee
+      WHEN b.status = 4 THEN 90  -- Passed chamber
+      WHEN b.status = 5 THEN 100 -- Enacted
+      ELSE 0
+    END || '% progression' as status_field,
+    'https://legiscan.com/TX/bill/' || b.bill_number || '/2025' as url,
+    t.state_link as bill_text_link
+  FROM legiscan.bills b
+  -- Join with history to get the latest action
+  JOIN (
+    SELECT 
+      bill_id,
+      date,
+      action,
+      ROW_NUMBER() OVER (PARTITION BY bill_id ORDER BY date DESC) as rn
+    FROM 
+      legiscan.bill_history
+  ) h ON b.bill_id = h.bill_id AND h.rn = 1
+  -- Join with texts to get the latest text link
+  JOIN (
+    SELECT 
+      _dlt_root_id,
+      type,
+      state_link,
+      ROW_NUMBER() OVER (PARTITION BY _dlt_root_id ORDER BY date DESC) as rn
+    FROM 
+      legiscan.bills_texts
+  ) t ON b._dlt_id = t._dlt_root_id AND t.rn = 1
+),
+texas_impact_bills AS (
+  SELECT * FROM texas_impact.bills
 )
-SELECT * FROM base_bills;
+
+SELECT
+  bd.*,
+  tib.Position,
+  tib.Topic,
+  tib.Description as texas_impact_description  
+FROM bill_details bd
+JOIN texas_impact_bills tib ON bd.bill_number = tib.bill_number 
