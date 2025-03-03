@@ -14,11 +14,11 @@ WITH bill_details AS (
     h.action AS last_action,
     -- Calculate progress percentage based on status
     CASE 
-      WHEN b.status = 1 THEN 25  -- Introduced
-      WHEN b.status = 2 THEN 50  -- In committee
-      WHEN b.status = 3 THEN 75  -- Passed committee
-      WHEN b.status = 4 THEN 90  -- Passed chamber
-      WHEN b.status = 5 THEN 100 -- Enacted
+      WHEN b.status = 1 THEN .25  -- Introduced
+      WHEN b.status = 2 THEN .50  -- In committee
+      WHEN b.status = 3 THEN .75  -- Passed committee
+      WHEN b.status = 4 THEN .90  -- Passed chamber
+      WHEN b.status = 5 THEN 1.00 -- Enacted
       ELSE 0
     END AS progress_percentage,
     -- Create status_field in the format shown in example
