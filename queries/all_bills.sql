@@ -32,6 +32,7 @@ WITH bill_details AS (
     END || 
     ' on ' || b.status_date as status_field,
     'https://legiscan.com/TX/bill/' || b.bill_number || '/2025' as url,
+    '/bills/' || b.bill_number as bill_detail_url,
     t.state_link as bill_text_link
   FROM legiscan.bills b
   -- Join with history to get the latest action

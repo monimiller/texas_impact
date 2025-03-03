@@ -137,8 +137,9 @@ queries:
   formatColumnTitles=true
   defaultSort="last_action_date"
   defaultSortDirection="desc"
+  link=bill_detail_url
 >
-  <Column id=url contentType=link linkLabel=bill_number title="Bill Number" openInNewTab=true/>
+  <Column id=bill_number title="Bill Number" />
   <Column id=chamber title="Chamber" />
   <Column id=Position title="Position" />
   <Column id=Topic title="Topic" />
