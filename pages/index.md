@@ -3,6 +3,7 @@ title: Texas Impact Legislative Dashboard
 queries:
   - all_bills: all_bills.sql
   - progress_counts: progress_counts.sql
+  - progress_stages: progress_stages.sql
   - topic_counts: topic_counts.sql
   - total_count: total_count.sql
   - house_count: house_count.sql
@@ -46,12 +47,15 @@ queries:
 
 ## Bill Progress Overview
 
-<BarChart 
-  data={progress_counts}
-  x=progress_percentage
-  y=count
-  xAxisTitle="Progress Percentage"
-  yAxisTitle="Count"
+<FunnelChart
+  data={progress_stages}
+  nameCol=stage
+  valueCol=count
+  title="Bill Progress Through Legislative Stages"
+  subtitle="Number of bills at each stage of the legislative process"
+  sort="none"
+  showPercent={true}
+  chartAreaHeight={350}
 />
 
 ## Bills by Topic
