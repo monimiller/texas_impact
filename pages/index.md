@@ -73,6 +73,16 @@ queries:
       title="Bills: Position → Chamber → Topic"
       subtitle="Flow from our position, to the legislative chamber, to the topic"
       chartAreaHeight={500}
+      colorPalette={[
+        "#2E8B57", // Support - Sea Green
+        "#CD5C5C", // Oppose - Indian Red
+        "#4682B4", // House - Steel Blue
+        "#9370DB", // Senate - Medium Purple
+        "#20B2AA", // Topic 1 - Light Sea Green
+        "#6495ED", // Topic 2 - Cornflower Blue
+        "#DEB887", // Topic 3 - Burlywood
+        "#BA55D3"  // Topic 4 - Medium Orchid
+      ]}
     />
   </Tab>
   <Tab label="Chamber → Position → Topic">
@@ -84,6 +94,16 @@ queries:
       title="Bills: Chamber → Position → Topic"
       subtitle="Flow from legislative chamber, to our position, to the topic"
       chartAreaHeight={500}
+      colorPalette={[
+        "#4682B4", // House - Steel Blue
+        "#9370DB", // Senate - Medium Purple
+        "#2E8B57", // Support - Sea Green
+        "#CD5C5C", // Oppose - Indian Red
+        "#20B2AA", // Topic 1 - Light Sea Green
+        "#6495ED", // Topic 2 - Cornflower Blue
+        "#DEB887", // Topic 3 - Burlywood
+        "#BA55D3"  // Topic 4 - Medium Orchid
+      ]}
     />
   </Tab>
   <Tab label="Position → Topic → Chamber">
@@ -95,6 +115,16 @@ queries:
       title="Bills: Position → Topic → Chamber"
       subtitle="Flow from our position, to the topic, to the legislative chamber"
       chartAreaHeight={500}
+      colorPalette={[
+        "#2E8B57", // Support - Sea Green
+        "#CD5C5C", // Oppose - Indian Red
+        "#20B2AA", // Topic 1 - Light Sea Green
+        "#6495ED", // Topic 2 - Cornflower Blue
+        "#DEB887", // Topic 3 - Burlywood
+        "#BA55D3", // Topic 4 - Medium Orchid
+        "#4682B4", // House - Steel Blue
+        "#9370DB"  // Senate - Medium Purple
+      ]}
     />
   </Tab>
 </Tabs>
