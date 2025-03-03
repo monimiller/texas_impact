@@ -11,6 +11,8 @@ queries:
   - support_count: support_count.sql
   - oppose_count: oppose_count.sql
   - position_chamber_topic_sankey: position_chamber_topic_sankey.sql
+  - chamber_position_topic_sankey: chamber_position_topic_sankey.sql
+  - position_topic_chamber_sankey: position_topic_chamber_sankey.sql
 ---
 
 <BigValue 
@@ -61,15 +63,41 @@ queries:
 
 ## Bills Flow Analysis
 
-<SankeyChart
-  data={position_chamber_topic_sankey}
-  sourceCol="source"
-  targetCol="target"
-  valueCol="value"
-  title="Bill Flow From Position to Chamber to Topic"
-  subtitle="Visualization of bill relationships across position, chamber, and topic"
-  chartAreaHeight={500}
-/>
+<Tabs>
+  <Tab label="Position → Chamber → Topic">
+    <SankeyDiagram
+      data={position_chamber_topic_sankey}
+      sourceCol="source"
+      targetCol="target"
+      valueCol="value"
+      title="Bills: Position → Chamber → Topic"
+      subtitle="Flow from our position, to the legislative chamber, to the topic"
+      chartAreaHeight={500}
+    />
+  </Tab>
+  <Tab label="Chamber → Position → Topic">
+    <SankeyDiagram
+      data={chamber_position_topic_sankey}
+      sourceCol="source"
+      targetCol="target"
+      valueCol="value"
+      title="Bills: Chamber → Position → Topic"
+      subtitle="Flow from legislative chamber, to our position, to the topic"
+      chartAreaHeight={500}
+    />
+  </Tab>
+  <Tab label="Position → Topic → Chamber">
+    <SankeyDiagram
+      data={position_topic_chamber_sankey}
+      sourceCol="source"
+      targetCol="target"
+      valueCol="value"
+      title="Bills: Position → Topic → Chamber"
+      subtitle="Flow from our position, to the topic, to the legislative chamber"
+      chartAreaHeight={500}
+    />
+  </Tab>
+</Tabs>
 
 ## Recent Activity
 
