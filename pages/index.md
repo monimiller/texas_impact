@@ -129,6 +129,34 @@ queries:
   </Tab>
 </Tabs>
 
+## Bill Topics
+
+<BarChart 
+  data={topic_counts} 
+  x="topic_name" 
+  y="bill_count"
+  title="Bills by Topic"
+  subtitle="Click on a topic to see detailed information"
+  sort="desc"
+  chartAreaHeight={350}
+/>
+
+<DataTable 
+  data={topic_counts}
+  link="topic_link"
+  title="Topics with Bill Counts"
+>
+  <Column id="topic_name" title="Topic" />
+  <Column id="bill_count" title="Number of Bills" />
+  <Column id="active_bills" title="Active Bills" />
+</DataTable>
+
+<Accordion title="All Topics List">
+  {#each topic_counts as topic}
+  - [{topic.topic_name}](/topic/{topic.topic_name}) ({topic.bill_count} bills)
+  {/each}
+</Accordion>
+
 ## Recent Activity
 
 <DataTable 
