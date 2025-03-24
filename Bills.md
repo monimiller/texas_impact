@@ -6,6 +6,9 @@
 * **HB 585**
   * Establishes the right to assistive reproductive technology treatments and procedures.
 
+* **HB 31**
+  * Relating to exceptions to otherwise prohibited abortions based on a physician's reasonable medical judgment.
+
 * **HB 653**
   * Relates to the purchase and use of contraceptives and access to contraceptive information. Restricts state and local governments from limiting access.
 
