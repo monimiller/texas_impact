@@ -61,6 +61,16 @@ queries:
   chartAreaHeight={350}
 />
 
+<DataTable data={all_bills} groupBy=last_action subtotals=true totalRow=true groupsOpen=false>
+  <Column id=url contentType=link linkLabel=bill_number title="Bill Number" openInNewTab=true/>
+  <Column id=chamber title="Chamber" />
+  <Column id=Position title="Position" />
+  <Column id=Topic title="Topic" />
+  <Column id=status_field title="Status" />
+  <Column id=last_action_date title="Last Updated" />
+  <Column id=last_action title="Last Action" />
+</DataTable>
+
 ## Recent Activity
 
 <DataTable 
