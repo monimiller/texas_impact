@@ -5,8 +5,8 @@ WITH bill_details AS (
     b.title,
     b.description,
     CASE 
-      WHEN b.bill_number LIKE 'H%' THEN 'House'
-      WHEN b.bill_number LIKE 'S%' THEN 'Senate'
+      WHEN b.bill_number LIKE 'HB%' OR b.bill_number LIKE 'HJR%' THEN 'House'
+      WHEN b.bill_number LIKE 'SB%' OR b.bill_number LIKE 'SJR%' THEN 'Senate'
       ELSE 'Other'
     END as chamber,
     b.status_date,
