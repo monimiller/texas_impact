@@ -1,32 +1,39 @@
 -- Convert the progress counts into a format for the funnel chart
-WITH progress_labels AS (
+WITH bill_stages AS (
   SELECT 
-    progress_percentage,
-    COUNT(*) as count,
     CASE 
-      WHEN progress_percentage = 0 THEN 'Not Started'
-      WHEN progress_percentage = 0.25 THEN 'Introduced'
-      WHEN progress_percentage = 0.5 THEN 'In Committee'
-      WHEN progress_percentage = 0.75 THEN 'Passed Committee'
-      WHEN progress_percentage = 0.9 THEN 'Passed Chamber'
-      WHEN progress_percentage = 1.0 THEN 'Enacted'
-      ELSE 'Unknown'
-    END as stage
+      WHEN last_action LIKE 'Filed%' THEN 'Filed'
+      WHEN last_action LIKE 'Read first time%' THEN 'Read First Time'
+      WHEN last_action LIKE 'Referred to%' THEN 'In Committee'
+      WHEN last_action LIKE '%Committee report%' THEN 'Committee Reported'
+      WHEN last_action LIKE '%passed%committee%' OR last_action LIKE '%Committee report%' THEN 'Passed Committee'
+      WHEN last_action LIKE '%passed%' AND last_action NOT LIKE '%committee%' THEN 'Passed Chamber'
+      WHEN last_action LIKE '%signed%governor%' OR last_action LIKE '%enacted%' OR last_action LIKE '%adopted%' THEN 'Enacted/Adopted'
+      ELSE 'Other Actions'
+    END as stage,
+    COUNT(*) as count
   FROM ${all_bills}
-  GROUP BY progress_percentage
+  GROUP BY stage
+),
+stage_order AS (
+  SELECT 
+    stage,
+    count,
+    CASE 
+      WHEN stage = 'Filed' THEN 1
+      WHEN stage = 'Read First Time' THEN 2
+      WHEN stage = 'In Committee' THEN 3
+      WHEN stage = 'Committee Reported' THEN 4
+      WHEN stage = 'Passed Committee' THEN 5
+      WHEN stage = 'Passed Chamber' THEN 6
+      WHEN stage = 'Enacted/Adopted' THEN 7
+      ELSE 8
+    END as display_order
+  FROM bill_stages
 )
 
 SELECT 
   stage, 
   count
-FROM progress_labels
-ORDER BY 
-  CASE 
-    WHEN progress_percentage = 0 THEN 1
-    WHEN progress_percentage = 0.25 THEN 2
-    WHEN progress_percentage = 0.5 THEN 3
-    WHEN progress_percentage = 0.75 THEN 4
-    WHEN progress_percentage = 0.9 THEN 5
-    WHEN progress_percentage = 1.0 THEN 6
-    ELSE 7
-  END 
+FROM stage_order
+ORDER BY display_order 
